@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+
+<html>
+
+<body>
+    <%= render 'layouts/header'%>
+        <%= yield %>
+            <div class="container">
+                <% if current_user.activated %>
+                    <div>
+                        <div class="alert alert-danger">
+                            <strong>Profilul dumneavoastra este deja activat!</strong> <a href="/"> Inapoi la site</a>
+                        </div>
+
+                    </div>
+                    <% else %>
+                        <div class="container">
+                            <div style="display: flex; justify-content: center; align-items: center; background: #fff; margin-top:20px; padding-top:15px; padding-bottom:15px;">
+                                <%= form_tag("/profiles", method: :post) do %>
+
+                                    <h3>Activare Profil!</h3>
+                                    <div>
+                                        <input type="hidden" name="user_id" value="<%= current_user.id %>"><br><br>
+                                    </div>
+
+                                    <div>
+                                        BattleTag <input name="btInput"><br><br>
+                                    </div>
+
+                                    <div>
+                                        Regiune
+                                        <select name="regiune">
+                        <option value="eu">Europa</option>
+                        <option value="us">America</option>
+                    </select> <br><br>
+                                    </div>
+
+                                    <div>
+                                        Platforma
+                                        <select name="platforma">
+                        <option value="pc">PC</option>
+                        <option value="psn">PlayStation Network</option>
+                        <option value="xbl">XBox Live</option>
+                    </select> <br><br>
+                                    </div>
+
+                                    <input type="submit" value="Activare">
+                            </div>
+                        </div>
+                        <% end %>
+            </div>
+            <% end %>
+</body>
+<html>

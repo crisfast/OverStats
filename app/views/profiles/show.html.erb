@@ -1,0 +1,1334 @@
+<%= render 'layouts/header'%>
+	<%= yield %>
+
+<% if @BlizzProfile["error"] == 404 %>
+
+		<div class="container">
+			<div class="row ">
+				<div class="profile-sidebar">
+					<h2 class="profile-userpic">Profil</h2>
+					<!-- SIDEBAR USER TITLE -->
+					
+					<div class="profile-usertitle" style="margin-top: 5px">
+						<div class="profile-usertitle-name">
+							<%= @user.name%> <br>
+								<div class="profile-usertitle-battletag">(
+									<span style="color: red"><%= @profil.battletag.gsub('-','#')%> </span>)</div>
+						</div>
+						<div class="profile-usertitle-region">
+							<%= @profil.region.upcase%> -
+								<%= @profil.platform.upcase%> <br>
+						</div>
+					</div>
+					<div class="alert alert-danger" style="text-align: center; font-weight: bold;"> BattleTag-ul introdus de utilizator nu exista</div>
+					<!-- END SIDEBAR USER TITLE -->
+					<% if user_signed_in? %>
+						<% if current_user.profile.id == @id.to_i %>
+							<div class="profile-userbuttons">
+								<a href="/profiles/<%=@id%>/edit"><button type="button" class="btn btn-success btn-sm">Editeaza</button></a>
+							</div>
+						<% else %>
+							<div class="profile-userbuttons">
+								Contul nu este valid, nu puteti sa va comparati!
+							</div>
+						<%end%>
+				   <% end %>
+				</div>
+			</div>
+		</div>
+
+<% else %>
+		<div class="container">
+			<div class="row ">
+				<div class="profile-sidebar">
+					<h2 class="profile-userpic">Profil</h2> <br>
+					<!-- SIDEBAR USERPIC -->
+					<div class="profile-userpic">
+						<img src='<%= @BlizzProfile[@profil.region]["stats"]["quickplay"]["overall_stats"]["avatar"]  %>' class="img-responsive" alt="">
+					</div>
+					<!-- END SIDEBAR USERPIC -->
+					<!-- SIDEBAR USER TITLE -->
+					<div class="profile-usertitle">
+						<div class="profile-usertitle-name">
+							<%= @user.name%> <br>
+								<div class="profile-usertitle-battletag">(
+									<%= @profil.battletag.gsub('-','#') %>)</div>
+						</div>
+						<div class="profile-usertitle-region">
+							<%= @profil.region.upcase%> -
+								<%= @profil.platform.upcase%> <br>
+						</div>
+						<div class="profile-usertitle-level ">
+							Level:
+							<%=  (@BlizzProfile[@profil.region]["stats"]["quickplay"]["overall_stats"]["prestige"].to_i * 100) + @BlizzProfile[@profil.region]["stats"]["quickplay"]["overall_stats"]["level"].to_i  %>
+						</div>
+					</div>
+					<!-- END SIDEBAR USER TITLE -->
+					<% if user_signed_in? %>
+						<% if current_user.profile.id == @id.to_i %>
+							<div class="profile-userbuttons">
+								<a href="/profiles/<%=@id%>/edit"><button type="button" class="btn btn-success btn-sm">Editeaza</button></a>
+							</div>
+							<% else %>
+								<div class="profile-userbuttons">
+								<%= link_to 'Comapara-ne', { :controller => "search", :action => "index", :battleTagSearch => @profil.battletag.gsub('-','#'), :platforma => @profil.platform, :regiune => @profil.region} %></button></a>
+									
+								</div>
+								<%end%>
+									<% end %>
+				</div>
+			</div>
+		</div>
+
+		<div class="container">
+			<div class="row">
+				<div class="statistics-user">
+					<h2>Statistici Generale</h2> <br><br>
+
+					<ul class="list-group general-section">
+					<% if  !@BlizzProfile[@profil.region]["stats"]["quickplay"]["overall_stats"]["comprank"].nil? %>
+						<li class="list-group-item">MMR: <%= @BlizzProfile[@profil.region]["stats"]["quickplay"]["overall_stats"]["comprank"] %></li>
+						<li class="list-group-item">Divizie: <%= @BlizzProfile[@profil.region]["stats"]["quickplay"]["overall_stats"]["tier"].capitalize %></li>
+						<li class="list-group-item">Scor Competitiv:<span style="color: green"> <%= @BlizzProfile[@profil.region]["stats"]["competitive"]["overall_stats"]["wins"] %></span> - <span style="color: red"><%= @BlizzProfile[@profil.region]["stats"]["competitive"]["overall_stats"]["losses"] %> </span>(<%= @BlizzProfile[@profil.region]["stats"]["competitive"]["overall_stats"]["win_rate"] %>%)</li>
+					<% else %>
+						<li class="list-group-item">Divizie: Nu si-a primit divizia!</li>
+						<% if @BlizzProfile[@profil.region]["stats"]["competitive"]["competitive"] == true %>
+						<li class="list-group-item">Scor Competitiv:<span style="color: green"> <%= @BlizzProfile[@profil.region]["stats"]["competitive"]["overall_stats"]["wins"] %></span> - <span style="color: red"><%= @BlizzProfile[@profil.region]["stats"]["competitive"]["overall_stats"]["losses"] %> </span>(<%= @BlizzProfile[@profil.region]["stats"]["competitive"]["overall_stats"]["win_rate"] %>%)</li>
+						<% end %>
+				    <% end %>
+						<li class="list-group-item">Victorii in QuickPlay: <span style="color: green"><%= @BlizzProfile[@profil.region]["stats"]["quickplay"]["overall_stats"]["wins"] %> </span></li>
+						<li class="list-group-item">Timp petrecut in joc: <%= @BlizzProfile[@profil.region]["stats"]["quickplay"]["game_stats"]["time_played"].to_i %> de ore </li>
+						<li class="list-group-item">Eliminari: <%= (@BlizzProfile[@profil.region]["stats"]["quickplay"]["game_stats"]["eliminations"]/(@BlizzProfile[@profil.region]["stats"]["quickplay"]["game_stats"]["time_played"].to_i * 60)).round(2) %> / min</li>
+						<li class="list-group-item">Dauna efectuata: <%= (@BlizzProfile[@profil.region]["stats"]["quickplay"]["game_stats"]["damage_done"]/(@BlizzProfile[@profil.region]["stats"]["quickplay"]["game_stats"]["time_played"].to_i * 60)).round(2) %> / min</li>
+						<li class="list-group-item">Decese: <%= (@BlizzProfile[@profil.region]["stats"]["quickplay"]["game_stats"]["deaths"]/(@BlizzProfile[@profil.region]["stats"]["quickplay"]["game_stats"]["time_played"].to_i * 60)).round(2) %> / min</li>
+						<li class="list-group-item">Heal: <%= (@BlizzProfile[@profil.region]["stats"]["quickplay"]["game_stats"]["healing_done"]/(@BlizzProfile[@profil.region]["stats"]["quickplay"]["game_stats"]["time_played"].to_i * 60)).round(2) %>  hp / min</li>
+						<li class="list-group-item">Medalii: <span style="color: saddlebrown"><%= @BlizzProfile[@profil.region]["stats"]["quickplay"]["game_stats"]["medals_bronze"].to_i %></span> - <span style="color: gray"><%= @BlizzProfile[@profil.region]["stats"]["quickplay"]["game_stats"]["medals_silver"].to_i %></span> - <span style="color: goldenrod"><%= @BlizzProfile[@profil.region]["stats"]["quickplay"]["game_stats"]["medals_gold"].to_i %></span></li>
+					</ul>
+					
+				</div>
+			</div>
+		</div>
+	
+<% if @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["ana"] != 0 %>
+	<!--Ana -->
+      <section id="ana-stats">
+		<div class="container">
+           <div class="row">
+		       <div class="statistics-user">
+				   
+			      <div class="float-xs-left stats-card-left">
+						<img src="https://blzgdapipro-a.akamaihd.net/game/heroes/0x02E000000000013B.png"> <br><br>
+						<% if  @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["ana"].to_i == 1 %>
+						Timp jucat: <%= @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["ana"].to_i %> ora <br>
+						<% elsif @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["ana"] < 1 %>
+						<% if  (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["ana"] * 60).to_i == 1 %>
+						Timp jucat: <%= (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["ana"] * 60).to_i %> minut <br>
+						<% else %>
+						Timp jucat: <%= (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["ana"] * 60).to_i %> minute <br>
+						<% end %>
+						<% elsif @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["ana"] > 1  %>
+						Timp jucat: <%= @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["ana"].to_i %> ore <br>
+						<% end %>
+						<% if  !@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["ana"]["general_stats"]["games_won"].nil? %>
+						Victorii: <span style="color: green"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["ana"]["general_stats"]["games_won"].to_i %> </span>
+						<% else %>
+						Victorii: 0
+						<% end %>				  
+				</div>
+				  
+				  <div>
+					  <h2>Ana</h2>
+                       <div class="champs-medals">
+						   <span style="color: saddlebrown"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["ana"]["general_stats"]["medals_bronze"].to_i %></span> - <span style="color: gray"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["ana"]["general_stats"]["medals_silver"].to_i %></span> - <span style="color: goldenrod"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["ana"]["general_stats"]["medals_gold"].to_i %></span>
+                       </div>
+                       <ul class="list-group general-section">
+						   <li class="list-group-item">Eliminari: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["ana"]["general_stats"]["eliminations"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["ana"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Decese:  <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["ana"]["general_stats"]["deaths"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["ana"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Participari:  <%= ((@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["ana"]["general_stats"]["offensive_assists"] + @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["ana"]["general_stats"]["defensive_assists"]) /(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["ana"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Dauna efectuata: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["ana"]["general_stats"]["damage_done"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["ana"] * 60)).round(2)%>  / min</li>
+						   <li class="list-group-item">Heal: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["ana"]["general_stats"]["healing_done"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["ana"]* 60)).round(2)%> / min</li>
+						   <li class="list-group-item">K/D: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["ana"]["general_stats"]["eliminations"].to_i/@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["ana"]["general_stats"]["deaths"].to_f).round(2)  %></li>
+						   <li class="list-group-item">Acuratete: <%= ((@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["ana"]["general_stats"]["weapon_accuracy"]) * 100).to_i %>% </li>
+						   <li class="list-group-item">Inamici adormiti: <%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["ana"]["general_stats"]["enemies_slept"] %></li>
+					   </ul>
+				  </div>
+			   </div>
+		   </div>
+		</div>
+      </section>
+<% end %>
+
+<% if @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["bastion"] != 0 %>
+<!--Bastion -->
+	<section id="bastion-stats">
+		<div class="container">
+           <div class="row">
+		       <div class="statistics-user">
+
+			      <div class="float-xs-left stats-card-left">
+						<img src="https://blzgdapipro-a.akamaihd.net/game/heroes/0x02E0000000000015.png"> <br><br>
+						<% if  @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["bastion"].to_i == 1 %>
+						Timp jucat: <%= @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["bastion"].to_i %> ora <br>
+						<% elsif @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["bastion"] < 1 %>
+						<% if  (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["bastion"] * 60).to_i == 1 %>
+						Timp jucat: <%= (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["bastion"] * 60).to_i %> minut <br>
+						<% else %>
+						Timp jucat: <%= (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["bastion"] * 60).to_i %> minute <br>
+						<% end %>
+						<% elsif @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["bastion"] > 1  %>
+						Timp jucat: <%= @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["bastion"].to_i %> ore <br>
+						<% end %>
+						<% if  !@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["bastion"]["general_stats"]["games_won"].nil? %>
+						Victorii: <span style="color: green"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["bastion"]["general_stats"]["games_won"].to_i %> </span>
+						<% else %>
+						Victorii: 0
+						<% end %>				  
+				</div>
+				  
+				  <div>
+					  <h2>Bastion</h2>
+                       <div class="champs-medals">
+						   <span style="color: saddlebrown"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["bastion"]["general_stats"]["medals_bronze"].to_i %></span> - <span style="color: gray"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["bastion"]["general_stats"]["medals_silver"].to_i %></span> - <span style="color: goldenrod"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["bastion"]["general_stats"]["medals_gold"].to_i %></span>
+                       </div>
+                       <ul class="list-group general-section">
+						   <li class="list-group-item">Eliminari: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["bastion"]["general_stats"]["eliminations"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["bastion"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Decese:  <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["bastion"]["general_stats"]["deaths"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["bastion"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Dauna efectuata: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["bastion"]["general_stats"]["damage_done"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["bastion"] * 60)).round(2)%>  / min</li>
+						   <li class="list-group-item">Heal Personal: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["bastion"]["general_stats"]["healing_done"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["bastion"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">K/D: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["bastion"]["general_stats"]["eliminations"].to_i/@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["bastion"]["general_stats"]["deaths"].to_f).round(2)  %></li>
+						   <li class="list-group-item">Acuratete: <%= ((@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["bastion"]["general_stats"]["weapon_accuracy"]) * 100).to_i %>% </li>
+						   <li class="list-group-item">Eliminari in modul Sentry: <%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["bastion"]["hero_stats"]["sentry_kills"].to_i %></li>
+						   <li class="list-group-item">Eliminari in modul Tank: <%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["bastion"]["hero_stats"]["tank_kills"].to_i %></li>
+					   </ul>
+				  </div>
+			   </div>
+		   </div>
+		</div>
+      </section>
+<% end %>
+
+<% if @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["dva"] != 0 %>
+<!--D.va -->
+	  	<section id="dva-stats">
+		<div class="container">
+           <div class="row">
+		       <div class="statistics-user">
+			   				   
+			      <div class="float-xs-left stats-card-left">
+						<img src="https://blzgdapipro-a.akamaihd.net/game/heroes/0x02E000000000007A.png"> <br><br>
+						<% if  @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["dva"].to_i == 1 %>
+						Timp jucat: <%= @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["dva"].to_i %> ora <br>
+						<% elsif @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["dva"] < 1 %>
+						<% if  (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["dva"] * 60).to_i == 1 %>
+						Timp jucat: <%= (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["dva"] * 60).to_i %> minut <br>
+						<% else %>
+						Timp jucat: <%= (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["dva"] * 60).to_i %> minute <br>
+						<% end %>
+						<% elsif @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["dva"] > 1  %>
+						Timp jucat: <%= @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["dva"].to_i %> ore <br>
+						<% end %>
+						<% if  !@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["dva"]["general_stats"]["games_won"].nil? %>
+						Victorii: <span style="color: green"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["dva"]["general_stats"]["games_won"].floor %> </span>
+						<% else %>
+						Victorii: 0
+						<% end %>				  
+					</div>
+				  
+				  <div>
+					  <h2>D.va</h2>
+                       <div class="champs-medals">
+						   <span style="color: saddlebrown"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["dva"]["general_stats"]["medals_bronze"].to_i %></span> - <span style="color: gray"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["dva"]["general_stats"]["medals_silver"].to_i %></span> - <span style="color: goldenrod"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["dva"]["general_stats"]["medals_gold"].to_i %></span>
+                       </div>
+                       <ul class="list-group general-section">
+						   <li class="list-group-item">Eliminari: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["dva"]["general_stats"]["eliminations"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["dva"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Decese:  <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["dva"]["general_stats"]["deaths"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["dva"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Dauna efectuata: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["dva"]["general_stats"]["damage_done"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["dva"] * 60)).round(2)%>  / min</li>
+						   <li class="list-group-item">Daune blocate: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["dva"]["hero_stats"]["damage_blocked"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["dva"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">K/D: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["dva"]["general_stats"]["eliminations"].to_i/@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["dva"]["general_stats"]["deaths"].to_f).round(2)  %></li>
+						   <li class="list-group-item">Acuratete: <%= ((@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["dva"]["general_stats"]["weapon_accuracy"]) * 100).to_i %>% </li>
+						   <li class="list-group-item">I-a fost distrus robotul de: <%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["dva"]["hero_stats"]["mech_deaths"].to_i %> ori</li>
+						   <li class="list-group-item">A chemat robotul de: <%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["dva"]["hero_stats"]["mechs_called"].to_i %> ori</li>
+					   </ul>
+				  </div>
+			   </div>
+		   </div>
+		</div>
+      </section>
+<% end %>
+
+<% if @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["genji"] != 0 %>
+	<!--genji -->
+      <section id="genji-stats">
+		<div class="container">
+           <div class="row">
+		       <div class="statistics-user">
+				   
+			      <div class="float-xs-left stats-card-left">
+						<img src="https://blzgdapipro-a.akamaihd.net/game/heroes/0x02E0000000000029.png"> <br><br>
+						<% if  @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["genji"].to_i == 1 %>
+						Timp jucat: <%= @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["genji"].to_i %> ora <br>
+						<% elsif @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["genji"] < 1 %>
+						<% if  (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["genji"] * 60).to_i == 1 %>
+						Timp jucat: <%= (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["genji"] * 60).to_i %> minut <br>
+						<% else %>
+						Timp jucat: <%= (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["genji"] * 60).to_i %> minute <br>
+						<% end %>
+						<% elsif @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["genji"] > 1  %>
+						Timp jucat: <%= @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["genji"].to_i %> ore <br>
+						<% end %>
+						<% if  !@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["genji"]["general_stats"]["games_won"].nil? %>
+						Victorii: <span style="color: green"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["genji"]["general_stats"]["games_won"].to_i %> </span>
+						<% else %>
+						Victorii: 0
+						<% end %>
+				  </div>
+				  
+				  <div>
+					  <h2>Genji</h2>
+                       <div class="champs-medals">
+						   <span style="color: saddlebrown"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["genji"]["general_stats"]["medals_bronze"].to_i %></span> - <span style="color: gray"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["genji"]["general_stats"]["medals_silver"].to_i %></span> - <span style="color: goldenrod"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["genji"]["general_stats"]["medals_gold"].to_i %></span>
+                       </div>
+                       <ul class="list-group general-section">
+						   <li class="list-group-item">Eliminari: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["genji"]["general_stats"]["eliminations"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["genji"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Decese:  <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["genji"]["general_stats"]["deaths"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["genji"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Shuriken-uri aruncate:  <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["genji"]["general_stats"]["shots_fired"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["genji"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Dauna efectuata: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["genji"]["general_stats"]["damage_done"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["genji"] * 60)).round(2)%>  / min</li>
+						   <li class="list-group-item">Lovituri critice: <%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["genji"]["general_stats"]["critical_hits"].to_i %>
+						   <li class="list-group-item">K/D: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["genji"]["general_stats"]["eliminations"].to_i/@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["genji"]["general_stats"]["deaths"].to_f).round(2)  %></li>
+						   <li class="list-group-item">Acuratete: <%= ((@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["genji"]["general_stats"]["weapon_accuracy"]) * 100).to_i %>% </li>
+						   <li class="list-group-item">Dauna reflectata: <%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["genji"]["hero_stats"]["damage_reflected"].to_i %></li>
+					   </ul>
+				  </div>
+			   </div>
+		   </div>
+		</div>
+      </section>
+<% end %>
+
+<% if @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["hanzo"] != 0 %>
+	<!--hanzo -->
+      <section id="hanzo-stats">
+		<div class="container">
+           <div class="row">
+		       <div class="statistics-user">
+				   
+			      <div class="float-xs-left stats-card-left">
+						<img src="https://blzgdapipro-a.akamaihd.net/game/heroes/0x02E0000000000005.png"> <br><br>
+						<% if  @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["hanzo"].to_i == 1 %>
+						Timp jucat: <%= @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["hanzo"].to_i %> ora <br>
+						<% elsif @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["hanzo"] < 1 %>
+						<% if  (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["hanzo"] * 60).to_i == 1 %>
+						Timp jucat: <%= (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["hanzo"] * 60).to_i %> minut <br>
+						<% else %>
+						Timp jucat: <%= (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["hanzo"] * 60).to_i %> minute <br>
+						<% end %>
+						<% elsif @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["hanzo"] > 1  %>
+						Timp jucat: <%= @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["hanzo"].to_i %> ore <br>
+						<% end %>
+						<% if  !@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["hanzo"]["general_stats"]["games_won"].nil? %>
+						Victorii: <span style="color: green"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["hanzo"]["general_stats"]["games_won"].to_i %> </span>
+						<% else %>
+						Victorii: 0
+						<% end %>
+				  </div>
+				  
+				  <div>
+					  <h2>Hanzo</h2>
+                       <div class="champs-medals">
+						   <span style="color: saddlebrown"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["hanzo"]["general_stats"]["medals_bronze"].to_i %></span> - <span style="color: gray"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["hanzo"]["general_stats"]["medals_silver"].to_i %></span> - <span style="color: goldenrod"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["hanzo"]["general_stats"]["medals_gold"].to_i %></span>
+                       </div>
+                       <ul class="list-group general-section">
+						   <li class="list-group-item">Eliminari: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["hanzo"]["general_stats"]["eliminations"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["hanzo"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Decese:  <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["hanzo"]["general_stats"]["deaths"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["hanzo"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Sageti trase:  <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["hanzo"]["general_stats"]["shots_fired"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["hanzo"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Dauna efectuata: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["hanzo"]["general_stats"]["damage_done"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["hanzo"] * 60)).round(2)%>  / min</li>
+						   <li class="list-group-item">Lovituri critice: <%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["hanzo"]["general_stats"]["critical_hits"].to_i %>
+						   <li class="list-group-item">K/D: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["hanzo"]["general_stats"]["eliminations"].to_i/@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["hanzo"]["general_stats"]["deaths"].to_f).round(2)  %></li>
+						   <li class="list-group-item">Acuratete: <%= ((@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["hanzo"]["general_stats"]["weapon_accuracy"]) * 100).to_i %>% </li>
+						   <% if !@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["hanzo"]["hero_stats"]["dragonstrike_kills"].nil?%>
+						   <li class="list-group-item">Eliminari folosind dragonul: <%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["hanzo"]["hero_stats"]["dragonstrike_kills"].to_i %></li>
+						   <% else %>
+						   <li class="list-group-item">O singura eliminare, folosind dragonul!</li>
+						   <% end %>
+					   </ul>
+				  </div>
+			   </div>
+		   </div>
+		</div>
+      </section>
+<% end %> 
+
+<% if @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["junkrat"] != 0 %>
+	<!--junkrat -->
+      <section id="junkrat-stats">
+		<div class="container">
+           <div class="row">
+		       <div class="statistics-user">
+				   
+			      <div class="float-xs-left stats-card-left">
+						<img src="https://blzgdapipro-a.akamaihd.net/game/heroes/0x02E0000000000065.png"> <br><br>
+						<% if  @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["junkrat"].to_i == 1 %>
+						Timp jucat: <%= @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["junkrat"].to_i %> ora <br>
+						<% elsif @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["junkrat"] < 1 %>
+						<% if  (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["junkrat"] * 60).to_i == 1 %>
+						Timp jucat: <%= (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["junkrat"] * 60).to_i %> minut <br>
+						<% else %>
+						Timp jucat: <%= (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["junkrat"] * 60).to_i %> minute <br>
+						<% end %>
+						<% elsif @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["junkrat"] > 1  %>
+						Timp jucat: <%= @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["junkrat"].to_i %> ore <br>
+						<% end %>
+						<% if  !@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["junkrat"]["general_stats"]["games_won"].nil? %>
+						Victorii: <span style="color: green"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["junkrat"]["general_stats"]["games_won"].to_i %> </span>
+						<% else %>
+						Victorii: 0
+						<% end %>
+				  </div>
+				  
+				  <div>
+					  <h2>Junkrat</h2>
+                       <div class="champs-medals">
+						   <span style="color: saddlebrown"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["junkrat"]["general_stats"]["medals_bronze"].to_i %></span> - <span style="color: gray"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["junkrat"]["general_stats"]["medals_silver"].to_i %></span> - <span style="color: goldenrod"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["junkrat"]["general_stats"]["medals_gold"].to_i %></span>
+                       </div>
+                       <ul class="list-group general-section">
+						   <li class="list-group-item">Eliminari: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["junkrat"]["general_stats"]["eliminations"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["junkrat"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Decese:  <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["junkrat"]["general_stats"]["deaths"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["junkrat"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Bombite aruncate:  <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["junkrat"]["general_stats"]["shots_fired"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["junkrat"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Dauna efectuata: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["junkrat"]["general_stats"]["damage_done"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["junkrat"] * 60)).round(2)%>  / min</li>
+						   <li class="list-group-item">Inamici prinsi in capcana: <%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["junkrat"]["hero_stats"]["enemies_trapped"] %>
+						   <li class="list-group-item">K/D: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["junkrat"]["general_stats"]["eliminations"].to_i/@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["junkrat"]["general_stats"]["deaths"].to_f).round(2)  %></li>
+						   <li class="list-group-item">Acuratete: <%= ((@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["junkrat"]["general_stats"]["weapon_accuracy"]) * 100).to_i %>% </li>
+						   <li class="list-group-item">Eliminari folosind RIP-Tire: <%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["junkrat"]["hero_stats"]["rip_tire_kills"].to_i %></li>
+					   </ul>
+				  </div>
+			   </div>
+		   </div>
+		</div>
+      </section>
+<% end %> 
+
+<% if @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["lucio"] != 0 %>
+	<!--lucio -->
+      <section id="lucio-stats">
+		<div class="container">
+           <div class="row">
+		       <div class="statistics-user">
+				   
+			      <div class="float-xs-left stats-card-left">
+						<img src="https://blzgdapipro-a.akamaihd.net/game/heroes/0x02E0000000000079.png"> <br><br>
+						<% if  @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["lucio"].to_i == 1 %>
+						Timp jucat: <%= @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["lucio"].to_i %> ora <br>
+						<% elsif @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["lucio"] < 1 %>
+						<% if  (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["lucio"] * 60).to_i == 1 %>
+						Timp jucat: <%= (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["lucio"] * 60).to_i %> minut <br>
+						<% else %>
+						Timp jucat: <%= (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["lucio"] * 60).to_i %> minute <br>
+						<% end %>
+						<% elsif @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["lucio"] > 1  %>
+						Timp jucat: <%= @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["lucio"].to_i %> ore <br>
+						<% end %>
+						<% if  !@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["lucio"]["general_stats"]["games_won"].nil? %>
+						Victorii: <span style="color: green"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["lucio"]["general_stats"]["games_won"].to_i %> </span>
+						<% else %>
+						Victorii: 0
+						<% end %>
+				  </div>
+				  
+				  <div>
+					  <h2>Lucio</h2>
+                       <div class="champs-medals">
+						   <span style="color: saddlebrown"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["lucio"]["general_stats"]["medals_bronze"].to_i %></span> - <span style="color: gray"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["lucio"]["general_stats"]["medals_silver"].to_i %></span> - <span style="color: goldenrod"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["lucio"]["general_stats"]["medals_gold"].to_i %></span>
+                       </div>
+                       <ul class="list-group general-section">
+						   <li class="list-group-item">Eliminari: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["lucio"]["general_stats"]["eliminations"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["lucio"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Decese:  <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["lucio"]["general_stats"]["deaths"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["lucio"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Gloante trase:  <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["lucio"]["general_stats"]["shots_fired"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["lucio"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Dauna efectuata: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["lucio"]["general_stats"]["damage_done"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["lucio"] * 60)).round(2)%>  / min</li>
+						   <li class="list-group-item">Heal: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["lucio"]["general_stats"]["healing_done"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["lucio"]* 60)).round(2)%> / min</li>						   <li class="list-group-item">K/D: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["lucio"]["general_stats"]["eliminations"].to_i/@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["lucio"]["general_stats"]["deaths"].to_f).round(2)  %></li>
+						   <li class="list-group-item">Acuratete: <%= ((@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["lucio"]["general_stats"]["weapon_accuracy"]) * 100).to_i %>% </li>
+						   <li class="list-group-item">A oferit <%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["lucio"]["hero_stats"]["sound_barriers_provided"].to_i %> bariere de sunet</li>
+					   </ul>
+				  </div>
+			   </div>
+		   </div>
+		</div>
+      </section>
+<% end %>
+
+<% if @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["mccree"] != 0 %>
+	<!--mccree -->
+      <section id="mccree-stats">
+		<div class="container">
+           <div class="row">
+		       <div class="statistics-user">
+				   
+			      <div class="float-xs-left stats-card-left">
+						<img src="https://blzgdapipro-a.akamaihd.net/game/heroes/0x02E0000000000042.png"> <br><br>
+						<% if  @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["mccree"].to_i == 1 %>
+						Timp jucat: <%= @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["mccree"].to_i %> ora <br>
+						<% elsif @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["mccree"] < 1 %>
+						<% if  (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["mccree"] * 60).to_i == 1 %>
+						Timp jucat: <%= (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["mccree"] * 60).to_i %> minut <br>
+						<% else %>
+						Timp jucat: <%= (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["mccree"] * 60).to_i %> minute <br>
+						<% end %>
+						<% elsif @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["mccree"] > 1  %>
+						Timp jucat: <%= @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["mccree"].to_i %> ore <br>
+						<% end %>
+						<% if  !@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["mccree"]["general_stats"]["games_won"].nil? %>
+						Victorii: <span style="color: green"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["mccree"]["general_stats"]["games_won"].to_i %> </span>
+						<% else %>
+						Victorii: 0
+						<% end %>
+				  </div>
+				  
+				  <div>
+					  <h2>McCree</h2>
+                       <div class="champs-medals">
+						   <span style="color: saddlebrown"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["mccree"]["general_stats"]["medals_bronze"].to_i %></span> - <span style="color: gray"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["mccree"]["general_stats"]["medals_silver"].to_i %></span> - <span style="color: goldenrod"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["mccree"]["general_stats"]["medals_gold"].to_i %></span>
+                       </div>
+                       <ul class="list-group general-section">
+						   <li class="list-group-item">Eliminari: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["mccree"]["general_stats"]["eliminations"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["mccree"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Decese:  <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["mccree"]["general_stats"]["deaths"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["mccree"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Gloante trase:  <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["mccree"]["general_stats"]["shots_fired"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["mccree"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Dauna efectuata: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["mccree"]["general_stats"]["damage_done"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["mccree"] * 60)).round(2)%>  / min</li>
+						   <li class="list-group-item">Lovituri critice: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["mccree"]["general_stats"]["critical_hits"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["mccree"]* 60)).round(2)%> / min</li>
+						   <li class="list-group-item">K/D: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["mccree"]["general_stats"]["eliminations"].to_i/@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["mccree"]["general_stats"]["deaths"].to_f).round(2)  %></li>
+						   <li class="list-group-item">Acuratete: <%= ((@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["mccree"]["general_stats"]["weapon_accuracy"]) * 100).to_i %>% </li>
+						   <li class="list-group-item">Inamici omorati folosind DeadEye: <%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["mccree"]["hero_stats"]["deadeye_kills"].to_i %></li>
+					   </ul>
+				  </div>
+			   </div>
+		   </div>
+		</div>
+      </section>
+<% end %> 
+
+<% if @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["mei"] != 0 %>
+	<!--mei -->
+      <section id="mei-stats">
+		<div class="container">
+           <div class="row">
+		       <div class="statistics-user">
+				   
+			      <div class="float-xs-left stats-card-left">
+						<img src="https://blzgdapipro-a.akamaihd.net/game/heroes/0x02E00000000000DD.png"> <br><br>
+						<% if  @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["mei"].to_i == 1 %>
+						Timp jucat: <%= @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["mei"].to_i %> ora <br>
+						<% elsif @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["mei"] < 1 %>
+						<% if  (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["mei"] * 60).to_i == 1 %>
+						Timp jucat: <%= (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["mei"] * 60).to_i %> minut <br>
+						<% else %>
+						Timp jucat: <%= (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["mei"] * 60).to_i %> minute <br>
+						<% end %>
+						<% elsif @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["mei"] > 1  %>
+						Timp jucat: <%= @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["mei"].to_i %> ore <br>
+						<% end %>
+						<% if  !@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["mei"]["general_stats"]["games_won"].nil? %>
+						Victorii: <span style="color: green"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["mei"]["general_stats"]["games_won"].to_i %> </span>
+						<% else %>
+						Victorii: 0
+						<% end %>
+				  </div>
+				  
+				  <div>
+					  <h2>Mei</h2>
+                       <div class="champs-medals">
+						   <span style="color: saddlebrown"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["mei"]["general_stats"]["medals_bronze"].to_i %></span> - <span style="color: gray"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["mei"]["general_stats"]["medals_silver"].to_i %></span> - <span style="color: goldenrod"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["mei"]["general_stats"]["medals_gold"].to_i %></span>
+                       </div>
+                       <ul class="list-group general-section">
+						   <li class="list-group-item">Eliminari: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["mei"]["general_stats"]["eliminations"].to_i/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["mei"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Decese:  <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["mei"]["general_stats"]["deaths"].to_i/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["mei"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Azot suflat:  <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["mei"]["general_stats"]["shots_fired"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["mei"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Daune: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["mei"]["general_stats"]["damage_done"].to_i/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["mei"] * 60)).round(2)%>  / min</li>
+						   <li class="list-group-item">Lovituri critice: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["mei"]["general_stats"]["critical_hits"].to_i/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["mei"]* 60)).round(2)%> / min</li>
+						   <li class="list-group-item">K/D: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["mei"]["general_stats"]["eliminations"].to_i/@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["mei"]["general_stats"]["deaths"].to_f).round(2)  %></li>
+						   <li class="list-group-item">Acuratete: <%= ((@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["mei"]["general_stats"]["weapon_accuracy"].to_i) * 100).to_i %>% </li>
+						   <li class="list-group-item">Inamici omorati folosind Ultimata: <%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["mei"]["hero_stats"]["blizzard_kills"].to_i %></li>
+						   <li class="list-group-item">Inamici inghetati: <%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["mei"]["hero_stats"]["enemies_frozen"].to_i %></li>
+						   <li class="list-group-item">Daune blocate: <%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["mei"]["hero_stats"]["damage_blocked"].to_i %></li>
+					   </ul>
+				  </div>
+			   </div>
+		   </div>
+		</div>
+      </section>
+<% end %> 
+
+<% if @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["mercy"] != 0 %>
+	<!--mercy -->
+      <section id="mercy-stats">
+		<div class="container">
+           <div class="row">
+		       <div class="statistics-user">
+				   
+			      <div class="float-xs-left stats-card-left">
+						<img src="https://blzgdapipro-a.akamaihd.net/game/heroes/0x02E0000000000004.png"> <br><br>
+						<% if  @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["mercy"].to_i == 1 %>
+						Timp jucat: <%= @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["mercy"].to_i %> ora <br>
+						<% elsif @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["mercy"] < 1 %>
+						<% if  (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["mercy"] * 60).to_i == 1 %>
+						Timp jucat: <%= (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["mercy"] * 60).to_i %> minut <br>
+						<% else %>
+						Timp jucat: <%= (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["mercy"] * 60).to_i %> minute <br>
+						<% end %>
+						<% elsif @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["mercy"] > 1  %>
+						Timp jucat: <%= @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["mercy"].to_i %> ore <br>
+						<% end %>
+						<% if  !@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["mercy"]["general_stats"]["games_won"].nil? %>
+						Victorii: <span style="color: green"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["mercy"]["general_stats"]["games_won"].to_i %> </span>
+						<% else %>
+						Victorii: 0
+						<% end %>
+				  </div>
+				  
+				  <div>
+					  <h2>Mercy</h2>
+                       <div class="champs-medals">
+						   <span style="color: saddlebrown"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["mercy"]["general_stats"]["medals_bronze"].to_i %></span> - <span style="color: gray"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["mercy"]["general_stats"]["medals_silver"].to_i %></span> - <span style="color: goldenrod"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["mercy"]["general_stats"]["medals_gold"].to_i %></span>
+                       </div>
+                       <ul class="list-group general-section">
+						   <li class="list-group-item">Eliminari: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["mercy"]["general_stats"]["eliminations"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["mercy"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Decese:  <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["mercy"]["general_stats"]["deaths"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["mercy"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Gloante trase:  <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["mercy"]["general_stats"]["shots_fired"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["mercy"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Dauna efectuata: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["mercy"]["general_stats"]["damage_done"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["mercy"] * 60)).round(2)%>  / min</li>
+						   <li class="list-group-item">Heal: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["mercy"]["general_stats"]["healing_done"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["mercy"]* 60)).round(2)%> / min</li>						   <li class="list-group-item">K/D: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["mercy"]["general_stats"]["eliminations"].to_i/@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["mercy"]["general_stats"]["deaths"].to_f).round(2)  %></li>
+						   <li class="list-group-item">Acuratete: <%= ((@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["mercy"]["general_stats"]["weapon_accuracy"]) * 100).to_i %>% </li>
+						   <li class="list-group-item">Aliati reinviati: <%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["mercy"]["hero_stats"]["players_resurrected"].to_i %> </li>
+					   </ul>
+				  </div>
+			   </div>
+		   </div>
+		</div>
+      </section>
+<% end %>
+
+<% if @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["pharah"] != 0 %>
+	<!--pharah -->
+      <section id="pharah-stats">
+		<div class="container">
+           <div class="row">
+		       <div class="statistics-user">
+				   
+			      <div class="float-xs-left stats-card-left">
+						<img src="https://blzgdapipro-a.akamaihd.net/game/heroes/0x02E0000000000008.png"> <br><br>
+						<% if  @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["pharah"].to_i == 1 %>
+						Timp jucat: <%= @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["pharah"].to_i %> ora <br>
+						<% elsif @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["pharah"] < 1 %>
+						<% if  (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["pharah"] * 60).to_i == 1 %>
+						Timp jucat: <%= (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["pharah"] * 60).to_i %> minut <br>
+						<% else %>
+						Timp jucat: <%= (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["pharah"] * 60).to_i %> minute <br>
+						<% end %>
+						<% elsif @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["pharah"] > 1  %>
+						Timp jucat: <%= @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["pharah"].to_i %> ore <br>
+						<% end %>
+						<% if  !@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["pharah"]["general_stats"]["games_won"].nil? %>
+						Victorii: <span style="color: green"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["pharah"]["general_stats"]["games_won"].to_i %> </span>
+						<% else %>
+						Victorii: 0
+						<% end %>
+				  </div>
+				  
+				  <div>
+					  <h2>Pharah</h2>
+                       <div class="champs-medals">
+						   <span style="color: saddlebrown"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["pharah"]["general_stats"]["medals_bronze"].to_i %></span> - <span style="color: gray"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["pharah"]["general_stats"]["medals_silver"].to_i %></span> - <span style="color: goldenrod"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["pharah"]["general_stats"]["medals_gold"].to_i %></span>
+                       </div>
+                       <ul class="list-group general-section">
+						   <li class="list-group-item">Eliminari: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["pharah"]["general_stats"]["eliminations"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["pharah"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Decese:  <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["pharah"]["general_stats"]["deaths"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["pharah"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Rachete lansate:  <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["pharah"]["general_stats"]["shots_fired"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["pharah"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Daune: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["pharah"]["general_stats"]["damage_done"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["pharah"] * 60)).round(2)%>  / min</li>
+						   <li class="list-group-item">K/D: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["pharah"]["general_stats"]["eliminations"].to_i/@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["pharah"]["general_stats"]["deaths"].to_f).round(2)  %></li>
+						   <li class="list-group-item">Acuratete: <%= ((@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["pharah"]["general_stats"]["weapon_accuracy"]) * 100).to_i %>% </li>
+						   <li class="list-group-item">Inamici omorati folosind Ultimata: <%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["pharah"]["hero_stats"]["barrage_kills"].to_i %></li>
+						   <li class="list-group-item">Inamici eliminati cu Rachete Directe: <%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["pharah"]["hero_stats"]["rocket_direct_hits"].to_i %></li>
+					   </ul>
+				  </div>
+			   </div>
+		   </div>
+		</div>
+      </section>
+<% end %>
+
+<% if @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["reaper"] != 0 %>
+	<!--reaper -->
+      <section id="reaper-stats">
+		<div class="container">
+           <div class="row">
+		       <div class="statistics-user">
+				   
+			      <div class="float-xs-left stats-card-left">
+						<img src="https://blzgdapipro-a.akamaihd.net/game/heroes/0x02E0000000000002.png"> <br><br>
+						<% if  @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["reaper"].to_i == 1 %>
+						Timp jucat: <%= @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["reaper"].to_i %> ora <br>
+						<% elsif @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["reaper"] < 1 %>
+						<% if  (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["reaper"] * 60).to_i == 1 %>
+						Timp jucat: <%= (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["reaper"] * 60).to_i %> minut <br>
+						<% else %>
+						Timp jucat: <%= (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["reaper"] * 60).to_i %> minute <br>
+						<% end %>
+						<% elsif @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["reaper"] > 1  %>
+						Timp jucat: <%= @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["reaper"].to_i %> ore <br>
+						<% end %>
+						<% if  !@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["reaper"]["general_stats"]["games_won"].nil? %>
+						Victorii: <span style="color: green"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["reaper"]["general_stats"]["games_won"].to_i %> </span>
+						<% else %>
+						Victorii: 0
+						<% end %>
+				  </div>
+				  
+				  <div>
+					  <h2>Reaper</h2>
+                       <div class="champs-medals">
+						   <span style="color: saddlebrown"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["reaper"]["general_stats"]["medals_bronze"].to_i %></span> - <span style="color: gray"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["reaper"]["general_stats"]["medals_silver"].to_i %></span> - <span style="color: goldenrod"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["reaper"]["general_stats"]["medals_gold"].to_i %></span>
+                       </div>
+                       <ul class="list-group general-section">
+						   <li class="list-group-item">Eliminari: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["reaper"]["general_stats"]["eliminations"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["reaper"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Decese:  <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["reaper"]["general_stats"]["deaths"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["reaper"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Shuriken-uri aruncate:  <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["reaper"]["general_stats"]["shots_fired"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["reaper"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Dauna efectuata: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["reaper"]["general_stats"]["damage_done"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["reaper"] * 60)).round(2)%>  / min</li>
+						   <li class="list-group-item">Lovituri critice: <%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["reaper"]["general_stats"]["critical_hits"].to_i %>
+						   <li class="list-group-item">K/D: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["reaper"]["general_stats"]["eliminations"].to_i/@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["reaper"]["general_stats"]["deaths"].to_f).round(2)  %></li>
+						   <li class="list-group-item">Acuratete: <%= ((@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["reaper"]["general_stats"]["weapon_accuracy"]) * 100).to_i %>% </li>
+						   <li class="list-group-item">Eliminari folosind Ultimata: <%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["reaper"]["hero_stats"]["death_blossom_kills"].to_i %></li>
+					   </ul>
+				  </div>
+			   </div>
+		   </div>
+		</div>
+      </section>
+<% end %>
+
+<% if @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["reinhardt"] != 0 %>
+<!--reinhardt -->
+	  	<section id="reinhardt-stats">
+		<div class="container">
+           <div class="row">
+		       <div class="statistics-user">
+			   				   
+			      <div class="float-xs-left stats-card-left">
+						<img src="https://blzgdapipro-a.akamaihd.net/game/heroes/0x02E0000000000007.png"> <br><br>
+						<% if  @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["reinhardt"].to_i == 1 %>
+						Timp jucat: <%= @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["reinhardt"].to_i %> ora <br>
+						<% elsif @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["reinhardt"] < 1 %>
+						<% if  (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["reinhardt"] * 60).to_i == 1 %>
+						Timp jucat: <%= (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["reinhardt"] * 60).to_i %> minut <br>
+						<% else %>
+						Timp jucat: <%= (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["reinhardt"] * 60).to_i %> minute <br>
+						<% end %>
+						<% elsif @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["reinhardt"] > 1  %>
+						Timp jucat: <%= @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["reinhardt"].to_i %> ore <br>
+						<% end %>
+						<% if  !@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["reinhardt"]["general_stats"]["games_won"].nil? %>
+						Victorii: <span style="color: green"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["reinhardt"]["general_stats"]["games_won"].to_i %> </span>
+						<% else %>
+						Victorii: 0
+						<% end %>				  
+					</div>
+				  
+				  <div>
+					  <h2>Reinhardt</h2>
+                       <div class="champs-medals">
+						   <span style="color: saddlebrown"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["reinhardt"]["general_stats"]["medals_bronze"].to_i %></span> - <span style="color: gray"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["reinhardt"]["general_stats"]["medals_silver"].to_i %></span> - <span style="color: goldenrod"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["reinhardt"]["general_stats"]["medals_gold"].to_i %></span>
+                       </div>
+                       <ul class="list-group general-section">
+						   <li class="list-group-item">Eliminari: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["reinhardt"]["general_stats"]["eliminations"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["reinhardt"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Decese:  <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["reinhardt"]["general_stats"]["deaths"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["reinhardt"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Dauna efectuata: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["reinhardt"]["general_stats"]["damage_done"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["reinhardt"] * 60)).round(2)%>  / min</li>
+						   <li class="list-group-item">Daune blocate: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["reinhardt"]["hero_stats"]["damage_blocked"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["reinhardt"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">K/D: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["reinhardt"]["general_stats"]["eliminations"].to_i/@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["reinhardt"]["general_stats"]["deaths"].to_f).round(2)  %></li>
+						   <li class="list-group-item">Eliminari prin Charge: <%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["reinhardt"]["hero_stats"]["charge_kills"].to_i %>% </li>
+						   <li class="list-group-item">Eliminari folosind Fire Strike: <%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["reinhardt"]["hero_stats"]["fire_strike_kills"].to_i %> </li>
+						   <li class="list-group-item">Eliminari folosind Ultimata: <%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["reinhardt"]["hero_stats"]["earthshatter_kills"].to_i %></li>
+					   </ul>
+				  </div>
+			   </div>
+		   </div>
+		</div>
+      </section>
+<% end %>
+
+<% if @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["roadhog"] != 0 %>
+<!--roadhog -->
+	  	<section id="roadhog-stats">
+		<div class="container">
+           <div class="row">
+		       <div class="statistics-user">
+			   				   
+			      <div class="float-xs-left stats-card-left">
+						<img src="https://blzgdapipro-a.akamaihd.net/game/heroes/0x02E0000000000040.png"> <br><br>
+						<% if  @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["roadhog"].to_i == 1 %>
+						Timp jucat: <%= @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["roadhog"].to_i %> ora <br>
+						<% elsif @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["roadhog"] < 1 %>
+						<% if  (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["roadhog"] * 60).to_i == 1 %>
+						Timp jucat: <%= (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["roadhog"] * 60).to_i %> minut <br>
+						<% else %>
+						Timp jucat: <%= (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["roadhog"] * 60).to_i %> minute <br>
+						<% end %>
+						<% elsif @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["roadhog"] > 1  %>
+						Timp jucat: <%= @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["roadhog"].to_i %> ore <br>
+						<% end %>
+						<% if  !@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["roadhog"]["general_stats"]["games_won"].nil? %>
+						Victorii: <span style="color: green"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["roadhog"]["general_stats"]["games_won"].to_i %> </span>
+						<% else %>
+						Victorii: 0
+						<% end %>				  
+					</div>
+				  
+				  <div>
+					  <h2>Roadhog</h2>
+                       <div class="champs-medals">
+						   <span style="color: saddlebrown"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["roadhog"]["general_stats"]["medals_bronze"].to_i %></span> - <span style="color: gray"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["roadhog"]["general_stats"]["medals_silver"].to_i %></span> - <span style="color: goldenrod"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["roadhog"]["general_stats"]["medals_gold"].to_i %></span>
+                       </div>
+                       <ul class="list-group general-section">
+						   <li class="list-group-item">Eliminari: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["roadhog"]["general_stats"]["eliminations"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["roadhog"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Decese:  <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["roadhog"]["general_stats"]["deaths"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["roadhog"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Dauna efectuata: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["roadhog"]["general_stats"]["damage_done"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["roadhog"] * 60)).round(2)%>  / min</li>
+						   <li class="list-group-item">Self-Heal: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["roadhog"]["general_stats"]["healing_done"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["roadhog"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">K/D: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["roadhog"]["general_stats"]["eliminations"].to_i/@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["roadhog"]["general_stats"]["deaths"].to_f).round(2)  %></li>
+						   <li class="list-group-item">Inamici prinsi cu Hook-ul: <%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["roadhog"]["hero_stats"]["enemies_hooked"].to_i %> </li>
+						   <li class="list-group-item">Acuratete Hook: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["roadhog"]["hero_stats"]["hook_accuracy"] * 100).to_i %>% </li>
+						   <li class="list-group-item">Eliminari folosind Ultimata: <%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["roadhog"]["hero_stats"]["whole_hog_kills"].to_i %></li>
+					   </ul>
+				  </div>
+			   </div>
+		   </div>
+		</div>
+      </section>
+<% end %>
+
+<% if @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["soldier76"] != 0 %>
+<!--soldier76 -->
+	  	<section id="soldier76-stats">
+		<div class="container">
+           <div class="row">
+		       <div class="statistics-user">
+			   				   
+			      <div class="float-xs-left stats-card-left">
+						<img src="https://blzgdapipro-a.akamaihd.net/game/heroes/0x02E000000000006E.png"> <br><br>
+						<% if  @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["soldier76"].to_i == 1 %>
+						Timp jucat: <%= @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["soldier76"].to_i %> ora <br>
+						<% elsif @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["soldier76"] < 1 %>
+						<% if  (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["soldier76"] * 60).to_i == 1 %>
+						Timp jucat: <%= (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["soldier76"] * 60).to_i %> minut <br>
+						<% else %>
+						Timp jucat: <%= (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["soldier76"] * 60).to_i %> minute <br>
+						<% end %>
+						<% elsif @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["soldier76"] > 1  %>
+						Timp jucat: <%= @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["soldier76"].to_i %> ore <br>
+						<% end %>
+						<% if  !@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["soldier76"]["general_stats"]["games_won"].nil? %>
+						Victorii: <span style="color: green"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["soldier76"]["general_stats"]["games_won"].to_i %> </span>
+						<% else %>
+						Victorii: 0
+						<% end %>				  
+					</div>
+				  
+				  <div>
+					  <h2>Soldier:76</h2>
+                       <div class="champs-medals">
+						   <span style="color: saddlebrown"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["soldier76"]["general_stats"]["medals_bronze"].to_i %></span> - <span style="color: gray"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["soldier76"]["general_stats"]["medals_silver"].to_i %></span> - <span style="color: goldenrod"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["soldier76"]["general_stats"]["medals_gold"].to_i %></span>
+                       </div>
+                       <ul class="list-group general-section">
+						   <li class="list-group-item">Eliminari: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["soldier76"]["general_stats"]["eliminations"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["soldier76"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Decese:  <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["soldier76"]["general_stats"]["deaths"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["soldier76"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Dauna efectuata: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["soldier76"]["general_stats"]["damage_done"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["soldier76"] * 60)).round(2)%>  / min</li>
+						   <li class="list-group-item">Heal: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["soldier76"]["hero_stats"]["biotic_field_healing_done"].to_i/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["soldier76"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">K/D: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["soldier76"]["general_stats"]["eliminations"].to_i/@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["soldier76"]["general_stats"]["deaths"].to_f).round(2)  %></li>
+						   <li class="list-group-item">Inamici eliminati folosind Helix Rocket: <%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["soldier76"]["hero_stats"]["helix_rockets_kills"].to_i %> </li>
+						   <li class="list-group-item">Acuratete: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["soldier76"]["general_stats"]["weapon_accuracy"] * 100).to_i %>% </li>
+						   <li class="list-group-item">Eliminari folosind Ultimata: <%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["soldier76"]["hero_stats"]["tactical_visor_kills"].to_i %></li>
+					   </ul>
+				  </div>
+			   </div>
+		   </div>
+		</div>
+      </section>
+<% end %>
+
+<% if @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["sombra"] != 0 && !@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["sombra"].nil? %>
+<!--sombra -->
+	  	<section id="sombra-stats">
+		<div class="container">
+           <div class="row">
+		       <div class="statistics-user">
+			   				   
+			      <div class="float-xs-left stats-card-left">
+						<img src="https://blzgdapipro-a.akamaihd.net/hero/sombra/hero-select-portrait-d5121256f71c9d7dc7a434ac75be95d99942e8386ba7f8462f3e15d91223854c9b9adde42a3aca70715ab24326a7c27848151e8ab92a259ac7744d7f15a6d91b.png"> <br><br>
+						<% if  @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["sombra"].to_i == 1 %>
+						Timp jucat: <%= @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["sombra"].to_i %> ora <br>
+						<% elsif @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["sombra"].to_i < 1 %>
+						<% if  (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["sombra"].to_i * 60).to_i == 1 %>
+						Timp jucat: <%= (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["sombra"].to_i * 60).to_i %> minut <br>
+						<% else %>
+						Timp jucat: <%= (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["sombra"].to_i * 60).to_i %> minute <br>
+						<% end %>
+						<% elsif @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["sombra"] > 1  %>
+						Timp jucat: <%= @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["sombra"].to_i %> ore <br>
+						<% end %>
+						<% if  !@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["sombra"]["general_stats"]["games_won"].nil? %>
+						Victorii: <span style="color: green"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["sombra"]["general_stats"]["games_won"].to_i %> </span>
+						<% else %>
+						Victorii: 0
+						<% end %>				  
+					</div>
+				  
+				  <div>
+					  <h2>Sombra</h2>
+                       <div class="champs-medals">
+						   <span style="color: saddlebrown"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["sombra"]["general_stats"]["medals_bronze"].to_i %></span> - <span style="color: gray"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["sombra"]["general_stats"]["medals_silver"].to_i %></span> - <span style="color: goldenrod"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["sombra"]["general_stats"]["medals_gold"].to_i %></span>
+                       </div>
+                       <ul class="list-group general-section">
+						   <li class="list-group-item">Eliminari: <%= ((@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["sombra"]["hero_stats"]["eliminations"].to_i + @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["sombra"]["hero_stats"]["elimination"].to_i )/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["sombra"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Decese:  <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["sombra"]["general_stats"]["deaths"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["sombra"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Dauna efectuata: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["sombra"]["hero_stats"]["damage_done"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["sombra"] * 60)).round(2)%>  / min</li>
+						   <li class="list-group-item">Inamici hackuti: <%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["sombra"]["general_stats"]["enemy_hacked"].to_i + @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["sombra"]["general_stats"]["enemys_hacked"].to_i%></li>
+						   <li class="list-group-item">K/D: <%= ((@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["sombra"]["hero_stats"]["elimination"].to_i + @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["sombra"]["hero_stats"]["eliminations"].to_i)/@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["sombra"]["general_stats"]["deaths"].to_f).round(2)  %></li>
+					   </ul>
+				  </div>
+			   </div>
+		   </div>
+		</div>
+      </section>
+<% end %>
+
+<% if @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["symmetra"] != 0 %>
+<!--symmetra -->
+	  	<section id="symmetra-stats">
+		<div class="container">
+           <div class="row">
+		       <div class="statistics-user">
+			   				   
+			      <div class="float-xs-left stats-card-left">
+						<img src="https://blzgdapipro-a.akamaihd.net/game/heroes/0x02E0000000000016.png"> <br><br>
+						<% if  @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["symmetra"].to_i == 1 %>
+						Timp jucat: <%= @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["symmetra"].to_i %> ora <br>
+						<% elsif @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["symmetra"] < 1 %>
+						<% if  (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["symmetra"] * 60).to_i == 1 %>
+						Timp jucat: <%= (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["symmetra"] * 60).to_i %> minut <br>
+						<% else %>
+						Timp jucat: <%= (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["symmetra"] * 60).to_i %> minute <br>
+						<% end %>
+						<% elsif @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["symmetra"] > 1  %>
+						Timp jucat: <%= @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["symmetra"].to_i %> ore <br>
+						<% end %>
+						<% if  !@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["symmetra"]["general_stats"]["games_won"].nil? %>
+						Victorii: <span style="color: green"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["symmetra"]["general_stats"]["games_won"].to_i %> </span>
+						<% else %>
+						Victorii: 0
+						<% end %>				  
+					</div>
+				  
+				  <div>
+					  <h2>Symmetra</h2>
+                       <div class="champs-medals">
+						   <span style="color: saddlebrown"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["symmetra"]["general_stats"]["medals_bronze"].to_i %></span> - <span style="color: gray"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["symmetra"]["general_stats"]["medals_silver"].to_i %></span> - <span style="color: goldenrod"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["symmetra"]["general_stats"]["medals_gold"].to_i %></span>
+                       </div>
+                       <ul class="list-group general-section">
+						   <li class="list-group-item">Eliminari: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["symmetra"]["general_stats"]["eliminations"].to_i/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["symmetra"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Decese:  <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["symmetra"]["general_stats"]["deaths"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["symmetra"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Dauna efectuata: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["symmetra"]["general_stats"]["damage_done"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["symmetra"] * 60)).round(2)%>  / min</li>
+						   <li class="list-group-item">Scuturi produse <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["symmetra"]["hero_stats"]["shields_provided"].to_i/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["symmetra"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">K/D: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["symmetra"]["general_stats"]["eliminations"].to_i/@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["symmetra"]["general_stats"]["deaths"].to_f).round(2)  %></li>
+						   <li class="list-group-item">Acuratete: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["symmetra"]["general_stats"]["weapon_accuracy"].to_f * 100).to_i %>% </li>
+						   <li class="list-group-item">Eliminari folosind Turete: <%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["symmetra"]["hero_stats"]["sentry_turret_kills"].to_i %></li>
+					   </ul>
+				  </div>
+			   </div>
+		   </div>
+		</div>
+      </section>
+<% end %>
+
+<% if @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["torbjorn"] != 0 %>
+<!--torbjorn -->
+	  	<section id="torbjorn-stats">
+		<div class="container">
+           <div class="row">
+		       <div class="statistics-user">
+			   				   
+			      <div class="float-xs-left stats-card-left">
+						<img src="https://blzgdapipro-a.akamaihd.net/game/heroes/0x02E0000000000006.png"> <br><br>
+						<% if  @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["torbjorn"].to_i == 1 %>
+						Timp jucat: <%= @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["torbjorn"].to_i %> ora <br>
+						<% elsif @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["torbjorn"] < 1 %>
+						<% if  (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["torbjorn"] * 60).to_i == 1 %>
+						Timp jucat: <%= (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["torbjorn"] * 60).to_i %> minut <br>
+						<% else %>
+						Timp jucat: <%= (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["torbjorn"] * 60).to_i %> minute <br>
+						<% end %>
+						<% elsif @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["torbjorn"] > 1  %>
+						Timp jucat: <%= @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["torbjorn"].to_i %> ore <br>
+						<% end %>
+						<% if  !@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["torbjorn"]["general_stats"]["games_won"].nil? %>
+						Victorii: <span style="color: green"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["torbjorn"]["general_stats"]["games_won"].to_i %> </span>
+						<% else %>
+						Victorii: 0
+						<% end %>				  
+					</div>
+				  
+				  <div>
+					  <h2>Torbjorn</h2>
+                       <div class="champs-medals">
+						   <span style="color: saddlebrown"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["torbjorn"]["general_stats"]["medals_bronze"].to_i %></span> - <span style="color: gray"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["torbjorn"]["general_stats"]["medals_silver"].to_i %></span> - <span style="color: goldenrod"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["torbjorn"]["general_stats"]["medals_gold"].to_i %></span>
+                       </div>
+                       <ul class="list-group general-section">
+						   <li class="list-group-item">Eliminari: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["torbjorn"]["general_stats"]["eliminations"].to_i/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["torbjorn"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Decese:  <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["torbjorn"]["general_stats"]["deaths"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["torbjorn"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Dauna efectuata: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["torbjorn"]["general_stats"]["damage_done"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["torbjorn"] * 60)).round(2)%>  / min</li>
+						   <li class="list-group-item">Armuri create: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["torbjorn"]["hero_stats"]["armor_packs_created"].to_i/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["torbjorn"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">K/D: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["torbjorn"]["general_stats"]["eliminations"].to_i/@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["torbjorn"]["general_stats"]["deaths"].to_f).round(2)  %></li>
+						   <li class="list-group-item">Eliminari folosind Ultimata: <%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["torbjorn"]["hero_stats"]["molten_core_kills"].to_i %> </li>
+						   <li class="list-group-item">Acuratete: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["torbjorn"]["general_stats"]["weapon_accuracy"].to_f * 100).to_i %>% </li>
+						   <li class="list-group-item">Eliminari folosind Tureta: <%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["torbjorn"]["hero_stats"]["turret_kills"].to_i %></li>
+					   </ul>
+				  </div>
+			   </div>
+		   </div>
+		</div>
+      </section>
+<% end %>
+
+<% if @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["tracer"] != 0 %>
+<!--tracer -->
+	  	<section id="tracer-stats">
+		<div class="container">
+           <div class="row">
+		       <div class="statistics-user">
+			   				   
+			      <div class="float-xs-left stats-card-left">
+						<img src="https://blzgdapipro-a.akamaihd.net/game/heroes/0x02E0000000000003.png"> <br><br>
+						<% if  @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["tracer"].to_i == 1 %>
+						Timp jucat: <%= @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["tracer"].to_i %> ora <br>
+						<% elsif @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["tracer"] < 1 %>
+						<% if  (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["tracer"] * 60).to_i == 1 %>
+						Timp jucat: <%= (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["tracer"] * 60).to_i %> minut <br>
+						<% else %>
+						Timp jucat: <%= (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["tracer"] * 60).to_i %> minute <br>
+						<% end %>
+						<% elsif @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["tracer"] > 1  %>
+						Timp jucat: <%= @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["tracer"].to_i %> ore <br>
+						<% end %>
+						<% if  !@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["tracer"]["general_stats"]["games_won"].nil? %>
+						Victorii: <span style="color: green"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["tracer"]["general_stats"]["games_won"].to_i %> </span>
+						<% else %>
+						Victorii: 0
+						<% end %>				  
+					</div>
+				  
+				  <div>
+					  <h2>Tracer</h2>
+                       <div class="champs-medals">
+						   <span style="color: saddlebrown"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["tracer"]["general_stats"]["medals_bronze"].to_i %></span> - <span style="color: gray"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["tracer"]["general_stats"]["medals_silver"].to_i %></span> - <span style="color: goldenrod"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["tracer"]["general_stats"]["medals_gold"].to_i %></span>
+                       </div>
+                       <ul class="list-group general-section">
+						   <li class="list-group-item">Eliminari: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["tracer"]["general_stats"]["eliminations"].to_i/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["tracer"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Decese:  <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["tracer"]["general_stats"]["deaths"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["tracer"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Dauna efectuata: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["tracer"]["general_stats"]["damage_done"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["tracer"] * 60)).round(2)%>  / min</li>
+						   <li class="list-group-item">Self-Heal: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["tracer"]["general_stats"]["self_healing"].to_i/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["tracer"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">K/D: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["tracer"]["general_stats"]["eliminations"].to_i/@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["tracer"]["general_stats"]["deaths"].to_f).round(2)  %></li>
+						   <li class="list-group-item">Eliminari folosind Ultimata: <%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["tracer"]["hero_stats"]["pulse_bomb_kills"].to_i %> </li>
+						   <li class="list-group-item">Acuratete: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["tracer"]["general_stats"]["weapon_accuracy"].to_f * 100).to_i %>% </li>
+						   <li class="list-group-item">Ultimate atasate de inamici: <%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["tracer"]["hero_stats"]["pulse_bombs_attached"].to_i %></li>
+					   </ul>
+				  </div>
+			   </div>
+		   </div>
+		</div>
+      </section>
+<% end %>
+
+<% if @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["widowmaker"] != 0 %>
+<!--widowmaker -->
+	  	<section id="widowmaker-stats">
+		<div class="container">
+           <div class="row">
+		       <div class="statistics-user">
+			   				   
+			      <div class="float-xs-left stats-card-left">
+						<img src="https://blzgdapipro-a.akamaihd.net/game/heroes/0x02E000000000000A.png"> <br><br>
+						<% if  @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["widowmaker"].to_i == 1 %>
+						Timp jucat: <%= @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["widowmaker"].to_i %> ora <br>
+						<% elsif @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["widowmaker"] < 1 %>
+						<% if  (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["widowmaker"] * 60).to_i == 1 %>
+						Timp jucat: <%= (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["widowmaker"] * 60).to_i %> minut <br>
+						<% else %>
+						Timp jucat: <%= (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["widowmaker"] * 60).to_i %> minute <br>
+						<% end %>
+						<% elsif @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["widowmaker"] > 1  %>
+						Timp jucat: <%= @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["widowmaker"].to_i %> ore <br>
+						<% end %>
+						<% if  !@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["widowmaker"]["general_stats"]["games_won"].nil? %>
+						Victorii: <span style="color: green"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["widowmaker"]["general_stats"]["games_won"].to_i %> </span>
+						<% else %>
+						Victorii: 0
+						<% end %>				  
+					</div>
+				  
+				  <div>
+					  <h2>Widowmaker</h2>
+                       <div class="champs-medals">
+						   <span style="color: saddlebrown"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["widowmaker"]["general_stats"]["medals_bronze"].to_i %></span> - <span style="color: gray"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["widowmaker"]["general_stats"]["medals_silver"].to_i %></span> - <span style="color: goldenrod"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["widowmaker"]["general_stats"]["medals_gold"].to_i %></span>
+                       </div>
+                       <ul class="list-group general-section">
+						   <li class="list-group-item">Eliminari: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["widowmaker"]["general_stats"]["eliminations"].to_i/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["widowmaker"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Decese:  <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["widowmaker"]["general_stats"]["deaths"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["widowmaker"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Dauna efectuata: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["widowmaker"]["general_stats"]["damage_done"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["widowmaker"] * 60)).round(2)%>  / min</li>
+						   <li class="list-group-item">Acuratete folosind luneta: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["widowmaker"]["hero_stats"]["scoped_accuracy"].to_f * 100).to_i %>% </li>
+						   <li class="list-group-item">K/D: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["widowmaker"]["general_stats"]["eliminations"].to_i/@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["widowmaker"]["general_stats"]["deaths"].to_f).round(2)  %></li>
+						   <li class="list-group-item">Lovituri folosind luneta: <%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["widowmaker"]["hero_stats"]["scoped_shots"].to_i %> </li>
+						   <li class="list-group-item">Acuratete: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["widowmaker"]["general_stats"]["weapon_accuracy"].to_f * 100).to_i %>% </li>
+						   <li class="list-group-item">Eliminari folosind mina veninoasa: <%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["widowmaker"]["hero_stats"]["venom_mine_kill"].to_i %></li>
+					   </ul>
+				  </div>
+			   </div>
+		   </div>
+		</div>
+      </section>
+<% end %>
+
+<% if @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["winston"] != 0 %>
+<!--winston -->
+	  	<section id="winston-stats">
+		<div class="container">
+           <div class="row">
+		       <div class="statistics-user">
+			   				   
+			      <div class="float-xs-left stats-card-left">
+						<img src="https://blzgdapipro-a.akamaihd.net/game/heroes/0x02E0000000000009.png"> <br><br>
+						<% if  @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["winston"].to_i == 1 %>
+						Timp jucat: <%= @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["winston"].to_i %> ora <br>
+						<% elsif @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["winston"] < 1 %>
+						<% if  (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["winston"] * 60).to_i == 1 %>
+						Timp jucat: <%= (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["winston"] * 60).to_i %> minut <br>
+						<% else %>
+						Timp jucat: <%= (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["winston"] * 60).to_i %> minute <br>
+						<% end %>
+						<% elsif @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["winston"] > 1  %>
+						Timp jucat: <%= @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["winston"].to_i %> ore <br>
+						<% end %>
+						<% if  !@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["winston"]["general_stats"]["games_won"].nil? %>
+						Victorii: <span style="color: green"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["winston"]["general_stats"]["games_won"].to_i %> </span>
+						<% else %>
+						Victorii: 0
+						<% end %>				  
+					</div>
+				  
+				  <div>
+					  <h2>Winston</h2>
+                       <div class="champs-medals">
+						   <span style="color: saddlebrown"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["winston"]["general_stats"]["medals_bronze"].to_i %></span> - <span style="color: gray"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["winston"]["general_stats"]["medals_silver"].to_i %></span> - <span style="color: goldenrod"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["winston"]["general_stats"]["medals_gold"].to_i %></span>
+                       </div>
+                       <ul class="list-group general-section">
+						   <li class="list-group-item">Eliminari: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["winston"]["general_stats"]["eliminations"].to_i/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["winston"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Decese:  <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["winston"]["general_stats"]["deaths"].to_i/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["winston"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Dauna efectuata: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["winston"]["general_stats"]["damage_done"].to_i/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["winston"] * 60)).round(2)%>  / min</li>
+						   <li class="list-group-item">Daune blocate: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["winston"]["hero_stats"]["damage_blocked"].to_i/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["winston"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">K/D: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["winston"]["general_stats"]["eliminations"].to_i/@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["winston"]["general_stats"]["deaths"].to_f).round(2)  %></li>
+						   <li class="list-group-item">Lovituri folosind Ultimata: <%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["winston"]["general_stats"]["primal_rage_kills"].to_i %> </li>
+						   <li class="list-group-item">Inamici impinsi in spate: <%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["winston"]["hero_stats"]["players_knocked_back"].to_i  %> </li>
+						   <li class="list-group-item">Eliminari din saritura: <%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["winston"]["hero_stats"]["jump_pack_kills"].to_i %></li>
+					   </ul>
+				  </div>
+			   </div>
+		   </div>
+		</div>
+      </section>
+<% end %>
+
+<% if @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["zarya"] != 0 %>
+<!--zarya -->
+	  	<section id="zarya-stats">
+		<div class="container">
+           <div class="row">
+		       <div class="statistics-user">
+			   				   
+			      <div class="float-xs-left stats-card-left">
+						<img src="https://blzgdapipro-a.akamaihd.net/game/heroes/0x02E0000000000068.png"> <br><br>
+						<% if  @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["zarya"].to_i == 1 %>
+						Timp jucat: <%= @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["zarya"].to_i %> ora <br>
+						<% elsif @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["zarya"] < 1 %>
+						<% if  (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["zarya"] * 60).to_i == 1 %>
+						Timp jucat: <%= (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["zarya"] * 60).to_i %> minut <br>
+						<% else %>
+						Timp jucat: <%= (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["zarya"] * 60).to_i %> minute <br>
+						<% end %>
+						<% elsif @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["zarya"] > 1  %>
+						Timp jucat: <%= @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["zarya"].to_i %> ore <br>
+						<% end %>
+						<% if  !@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["zarya"]["general_stats"]["games_won"].nil? %>
+						Victorii: <span style="color: green"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["zarya"]["general_stats"]["games_won"].to_i %> </span>
+						<% else %>
+						Victorii: 0
+						<% end %>				  
+					</div>
+				  
+				  <div>
+					  <h2>Zarya</h2>
+                       <div class="champs-medals">
+						   <span style="color: saddlebrown"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["zarya"]["general_stats"]["medals_bronze"].to_i %></span> - <span style="color: gray"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["zarya"]["general_stats"]["medals_silver"].to_i %></span> - <span style="color: goldenrod"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["zarya"]["general_stats"]["medals_gold"].to_i %></span>
+                       </div>
+                       <ul class="list-group general-section">
+						   <li class="list-group-item">Eliminari: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["zarya"]["general_stats"]["eliminations"].to_i/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["zarya"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Decese:  <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["zarya"]["general_stats"]["deaths"].to_i/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["zarya"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Dauna efectuata: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["zarya"]["general_stats"]["damage_done"].to_i/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["zarya"] * 60)).round(2)%>  / min</li>
+						   <li class="list-group-item">Daune blocate: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["zarya"]["hero_stats"]["damage_blocked"].to_i/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["zarya"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">K/D: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["zarya"]["general_stats"]["eliminations"].to_i/@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["zarya"]["general_stats"]["deaths"].to_f).round(2)  %></li>
+						   <li class="list-group-item">Numarul maxim de oameni prinsi in Ultimata: <%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["zarya"]["hero_stats"]["graviton_surge_kills_most_in_game"].to_i %> </li>
+						   <li class="list-group-item">Eliminari cu laserul la putere maxima: <%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["zarya"]["hero_stats"]["high_energy_kills"].to_i  %> </li>
+						   <li class="list-group-item">Scuturi aplicate aliatilor: <%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["zarya"]["hero_stats"]["projected_barriers_applied"].to_i %></li>
+					   </ul>
+				  </div>
+			   </div>
+		   </div>
+		</div>
+      </section>
+<% end %>
+
+<% if @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["zenyatta"] != 0 %>
+<!--zenyatta -->
+	  	<section id="zenyatta-stats">
+		<div class="container">
+           <div class="row">
+		       <div class="statistics-user">
+			   				   
+			      <div class="float-xs-left stats-card-left">
+						<img src="https://blzgdapipro-a.akamaihd.net/game/heroes/0x02E0000000000020.png"> <br><br>
+						<% if  @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["zenyatta"].to_i == 1 %>
+						Timp jucat: <%= @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["zenyatta"].to_i %> ora <br>
+						<% elsif @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["zenyatta"] < 1 %>
+						<% if  (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["zenyatta"] * 60).to_i == 1 %>
+						Timp jucat: <%= (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["zenyatta"] * 60).to_i %> minut <br>
+						<% else %>
+						Timp jucat: <%= (@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["zenyatta"] * 60).to_i %> minute <br>
+						<% end %>
+						<% elsif @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["zenyatta"] > 1  %>
+						Timp jucat: <%= @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["zenyatta"].to_i %> ore <br>
+						<% end %>
+						<% if  !@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["zenyatta"]["general_stats"]["games_won"].nil? %>
+						Victorii: <span style="color: green"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["zenyatta"]["general_stats"]["games_won"].to_i %> </span>
+						<% else %>
+						Victorii: 0
+						<% end %>				  
+					</div>
+				  
+				  <div>
+					  <h2>Zenyatta</h2>
+                       <div class="champs-medals">
+						   <span style="color: saddlebrown"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["zenyatta"]["general_stats"]["medals_bronze"].to_i %></span> - <span style="color: gray"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["zenyatta"]["general_stats"]["medals_silver"].to_i %></span> - <span style="color: goldenrod"><%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["zenyatta"]["general_stats"]["medals_gold"].to_i %></span>
+                       </div>
+                       <ul class="list-group general-section">
+						   <li class="list-group-item">Eliminari: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["zenyatta"]["general_stats"]["eliminations"].to_i/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["zenyatta"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Decese:  <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["zenyatta"]["general_stats"]["deaths"].to_i/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["zenyatta"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Dauna efectuata: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["zenyatta"]["general_stats"]["damage_done"].to_i/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["zenyatta"] * 60)).round(2)%>  / min</li>
+						   <li class="list-group-item">Heal: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["zenyatta"]["general_stats"]["healing_done"]/(@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["zenyatta"]* 60)).round(2)%> / min</li>
+						   <li class="list-group-item">K/D: <%= (@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["zenyatta"]["general_stats"]["eliminations"].to_i/@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["zenyatta"]["general_stats"]["deaths"].to_f).round(2)  %></li>
+						   <li class="list-group-item">Heal total folosind Ultimata: <%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["zenyatta"]["general_stats"]["transcendence_healing"].to_i %> </li>
+						   <li class="list-group-item">Acuratete: <%= ((@HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["zenyatta"]["general_stats"]["weapon_accuracy"]) * 100).to_f.round(2) %>% </li>
+						   <li class="list-group-item">Cel mai bun heal folosind Ultimata: <%= @HeroesProfile[@profil.region]["heroes"]["stats"]["quickplay"]["zenyatta"]["hero_stats"]["transcendence_healing_best"].to_i %></li>
+					   </ul>
+				  </div>
+			   </div>
+		   </div>
+		</div>
+      </section>
+<% end %>
+
+<div class="meniu-lateral">
+<h5>Submeniu Eroi</h5>
+<% if @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["ana"] != 0 %>
+<a href="#ana-stats">Ana</a><br>
+<% end %>
+
+<% if @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["bastion"] != 0  %>
+<a href="#bastion-stats">Bastion</a><br>
+<% end %>
+
+<% if @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["dva"] != 0  %>
+<a href="#dva-stats">D.Va</a><br>
+<% end %>
+
+<% if @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["genji"] != 0 %>
+<a href="#genji-stats">Genji</a><br>
+<% end %>
+
+<% if @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["hanzo"] != 0 %>
+<a href="#hanzo-stats">Hanzo</a><br>
+<% end %>
+
+<% if @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["junkrat"] != 0 %>
+<a href="#junkrat-stats">Junkrat</a><br>
+<% end %>
+
+<% if @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["lucio"] != 0 %>
+<a href="#lucio-stats">Lucio</a><br>
+<% end%>
+
+<% if @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["mccree"] != 0 %>
+<a href="#mccree-stats">McCree</a><br>
+<% end %>
+
+<% if @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["mei"] != 0 %>
+<a href="#mei-stats">Mei</a><br>
+<% end %>
+
+<% if @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["mercy"] != 0 %>
+<a href="#mercy-stats">Mercy</a><br>
+<% end %>
+
+<% if @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["pharah"] != 0 %>
+<a href="#pharah-stats">Pharah</a><br>
+<% end%>
+
+<% if @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["reaper"] != 0 %>
+<a href="#reaper-stats">Reaper</a><br>
+<% end %>
+
+<% if @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["reinhardt"] != 0 %>
+<a href="#reinhardt-stats">Reinhardt</a><br>
+<% end %>
+
+<% if @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["roadhog"] != 0 %>
+<a href="#roadhog-stats">Roadhog</a><br>
+<% end %>
+
+<% if @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["soldier76"] != 0 %>
+<a href="#soldier76-stats">Soldier:76</a><br>
+<% end %>
+
+<% if @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["sombra"] != 0 && !@HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["sombra"].nil? %>
+<a href="#sombra-stats">Sombra</a><br>
+<% end %>
+
+<% if @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["symmetra"] != 0 %>
+<a href="#symmetra-stats">Symmetra</a><br>
+<% end %>
+
+<% if @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["torbjorn"] != 0 %>
+<a href="#torbjorn-stats">Torbjorn</a><br>
+<% end %>
+
+<% if @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["tracer"] != 0 %>
+<a href="#tracer-stats">Tracer</a><br>
+<% end %>
+
+<% if @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["widowmaker"] != 0 %>
+<a href="#widowmaker-stats">Widowmaker</a><br>
+<% end %>
+
+<% if @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["winston"] != 0 %>
+<a href="#winston-stats">Winston</a><br>
+<% end %>
+
+<% if @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["zarya"] != 0 %>
+<a href="#zarya-stats">Zarya</a><br>
+<% end %>
+
+<% if @HeroesProfile[@profil.region]["heroes"]["playtime"]["quickplay"]["zenyatta"] != 0 %>
+<a href="#zenyatta-stats">Zenyatta</a><br>
+<% end %>
+</div>
+
+<% end %>

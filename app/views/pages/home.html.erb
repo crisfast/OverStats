@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+
+<html>
+<body>
+
+<%= render 'layouts/header'%>
+<%= yield %>
+
+<% if user_signed_in? %>
+<div class="container inregis" style="background: #fff; padding-bottom: 15px; margin-top: 25px;">
+
+<%= form_tag("/search", method: :get) do %>
+
+	<h3>Compara-te cu alti jucatori </h3>
+	<label>BattleTag:</label>
+	<br />
+	
+    <input type="text" name="battleTagSearch" value="">
+	<br />
+	
+    <label>Regiune</label>
+	<br />
+    
+    <select name="regiune">
+        <option value="eu">Europa</option>
+        <option value="us">America</option>
+    </select>
+	<br />
+	
+    <label>Platforma</label>
+	<br />
+
+    <select name="platforma">
+        <option value="pc">PC</option>
+        <option value="psn">PlayStation Network</option>
+        <option value="xbl">XBox Live</option>
+     </select>
+     <br />
+     <br />
+	<input type="submit" value="Cauta">
+
+<% end %>
+</div>
+
+<% else %>
+
+<div class="container inregis" style="background: #fff; padding-bottom: 15px; margin-top: 25px;">
+
+Pentru a folosi functia de cautare, te rog sa te <a href="/users/sign_in" style="margin-left: 5px;">autentifici</a>!
+
+</div>
+
+<% end %>
+
+</body>
+<html>

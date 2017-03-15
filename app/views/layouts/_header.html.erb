@@ -1,0 +1,27 @@
+<% if user_signed_in? && current_user.activated == false %>
+  <div class="alert alert-danger">
+    <strong>Profilul nu este activat!</strong> Va rugam sa apasati <a href="/profiles/new">aici</a> pentru a activa profilul.
+  </div>
+  <% end %>
+    <nav>
+      <div class="topBar">
+        <nav class="navbar navbar-default">
+          <div class="container">
+            <% if user_signed_in? %> Bine ai venit,
+              <%= current_user.name %>
+                <%= link_to 'Logout', destroy_user_session_path, method: :delete %>|
+                <% if current_user.activated == true %> 
+                <a href="/profiles/<%= current_user.profile.id %>">Profil</a>
+              <% end %>
+                  <% else %>
+                    <a href="/users/sign_in">Autentificare</a> | <a href="/users/sign_up">Inregistrare</a> |
+                    <% end %>
+
+        </nav>
+        </div>
+      </div>
+    </nav>
+
+    <header class="hCenter">
+      <a href="/">OverStats</a>
+    </header>

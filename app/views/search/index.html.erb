@@ -1,0 +1,495 @@
+<%= render 'layouts/header'%>
+	<%= yield %>
+
+<% if !params[:battleTagSearch].nil? && !params[:regiune].nil? && !params[:platforma].nil? %>
+
+		<div class="container">
+			<div class="row">
+				<div class="statistics-user">
+					<h2>Statistici Generale</h2> <br><br>
+
+<div style="display:inline-block; *display:inline; zoom: 1; margin-left: 15%;">
+
+					<span style="color: red; font-size: 25px;"><%= current_user.profile.battletag.gsub('-','#')%> </span>
+					<ul class="list-group" >
+					<% if  !@userConectatProfileStats[current_user.profile.region]["stats"]["quickplay"]["overall_stats"]["comprank"].nil? %>
+						<li class="list-group-item">MMR: <%= @userConectatProfileStats[current_user.profile.region]["stats"]["quickplay"]["overall_stats"]["comprank"] %></li>
+						<li class="list-group-item">Divizie: <%= @userConectatProfileStats[current_user.profile.region]["stats"]["quickplay"]["overall_stats"]["tier"].capitalize %></li>
+						<li class="list-group-item">Scor Competitiv:<span style="color: green"> <%= @userConectatProfileStats[current_user.profile.region]["stats"]["competitive"]["overall_stats"]["wins"] %></span> - <span style="color: red"><%= @userConectatProfileStats[current_user.profile.region]["stats"]["competitive"]["overall_stats"]["losses"] %> </span>(<%= @userConectatProfileStats[current_user.profile.region]["stats"]["competitive"]["overall_stats"]["win_rate"] %>%)</li>
+					<% else %>
+						<li class="list-group-item">Divizie: Nu si-a primit divizia!</li>
+						<% if @userConectatProfileStats[current_user.profile.region]["stats"]["competitive"]["competitive"] == true %>
+						<li class="list-group-item">Scor Competitiv:<span style="color: green"> <%= @userConectatProfileStats[current_user.profile.region]["stats"]["competitive"]["overall_stats"]["wins"] %></span> - <span style="color: red"><%= @userConectatProfileStats[current_user.profile.region]["stats"]["competitive"]["overall_stats"]["losses"] %> </span>(<%= @userConectatProfileStats[current_user.profile.region]["stats"]["competitive"]["overall_stats"]["win_rate"] %>%)</li>
+						<% end %>
+				    <% end %>
+						<li class="list-group-item">Victorii in QuickPlay: <span style="color: green"><%= @userConectatProfileStats[current_user.profile.region]["stats"]["quickplay"]["overall_stats"]["wins"] %> </span></li>
+						<li class="list-group-item">Timp petrecut in joc: <%= @userConectatProfileStats[current_user.profile.region]["stats"]["quickplay"]["game_stats"]["time_played"].to_i %> de ore </li>
+						<li class="list-group-item">Eliminari: <%= (@userConectatProfileStats[current_user.profile.region]["stats"]["quickplay"]["game_stats"]["eliminations"]/(@userConectatProfileStats[current_user.profile.region]["stats"]["quickplay"]["game_stats"]["time_played"].to_i * 60)).round(2) %> / min</li>
+						<li class="list-group-item">Dauna efectuata: <%= (@userConectatProfileStats[current_user.profile.region]["stats"]["quickplay"]["game_stats"]["damage_done"]/(@userConectatProfileStats[current_user.profile.region]["stats"]["quickplay"]["game_stats"]["time_played"].to_i * 60)).round(2) %> / min</li>
+						<li class="list-group-item">Decese: <%= (@userConectatProfileStats[current_user.profile.region]["stats"]["quickplay"]["game_stats"]["deaths"]/(@userConectatProfileStats[current_user.profile.region]["stats"]["quickplay"]["game_stats"]["time_played"].to_i * 60)).round(2) %> / min</li>
+						<li class="list-group-item">Heal: <%= (@userConectatProfileStats[current_user.profile.region]["stats"]["quickplay"]["game_stats"]["healing_done"]/(@userConectatProfileStats[current_user.profile.region]["stats"]["quickplay"]["game_stats"]["time_played"].to_i * 60)).round(2) %>  hp / min</li>
+						<li class="list-group-item">Medalii: <span style="color: saddlebrown"><%= @userConectatProfileStats[current_user.profile.region]["stats"]["quickplay"]["game_stats"]["medals_bronze"].to_i %></span> - <span style="color: gray"><%= @userConectatProfileStats[current_user.profile.region]["stats"]["quickplay"]["game_stats"]["medals_silver"].to_i %></span> - <span style="color: goldenrod"><%= @userConectatProfileStats[current_user.profile.region]["stats"]["quickplay"]["game_stats"]["medals_gold"].to_i %></span></li>
+					</ul>
+					</div>
+				
+				<div style="display:inline-block; *display:inline; zoom: 1; margin-left: 15%;">
+
+				<span style="color: BLUE; font-size: 25px;"><%= @userCautat.battletag.gsub("-","#") %> </span>
+				<ul class="list-group">
+					<% if  !@userCautatProfileStats[current_user.profile.region]["stats"]["quickplay"]["overall_stats"]["comprank"].nil? %>
+						<li class="list-group-item">MMR: <%= @userCautatProfileStats[current_user.profile.region]["stats"]["quickplay"]["overall_stats"]["comprank"] %></li>
+						<li class="list-group-item">Divizie: <%= @userCautatProfileStats[current_user.profile.region]["stats"]["quickplay"]["overall_stats"]["tier"].capitalize %></li>
+						<li class="list-group-item">Scor Competitiv:<span style="color: green"> <%= @userCautatProfileStats[current_user.profile.region]["stats"]["competitive"]["overall_stats"]["wins"] %></span> - <span style="color: red"><%= @userCautatProfileStats[current_user.profile.region]["stats"]["competitive"]["overall_stats"]["losses"] %> </span>(<%= @userCautatProfileStats[current_user.profile.region]["stats"]["competitive"]["overall_stats"]["win_rate"] %>%)</li>
+					<% else %>
+						<li class="list-group-item">Divizie: Nu si-a primit divizia!</li>
+						<% if @userCautatProfileStats[current_user.profile.region]["stats"]["competitive"]["competitive"] == true %>
+						<li class="list-group-item">Scor Competitiv:<span style="color: green"> <%= @userCautatProfileStats[current_user.profile.region]["stats"]["competitive"]["overall_stats"]["wins"] %></span> - <span style="color: red"><%= @userCautatProfileStats[current_user.profile.region]["stats"]["competitive"]["overall_stats"]["losses"] %> </span>(<%= @userCautatProfileStats[current_user.profile.region]["stats"]["competitive"]["overall_stats"]["win_rate"] %>%)</li>
+						<% end %>
+				    <% end %>
+						<li class="list-group-item">Victorii in QuickPlay: <span style="color: green"><%= @userCautatProfileStats[current_user.profile.region]["stats"]["quickplay"]["overall_stats"]["wins"] %> </span></li>
+						<li class="list-group-item">Timp petrecut in joc: <%= @userCautatProfileStats[current_user.profile.region]["stats"]["quickplay"]["game_stats"]["time_played"].to_i %> de ore </li>
+						<li class="list-group-item">Eliminari: <%= (@userCautatProfileStats[current_user.profile.region]["stats"]["quickplay"]["game_stats"]["eliminations"]/(@userCautatProfileStats[current_user.profile.region]["stats"]["quickplay"]["game_stats"]["time_played"].to_i * 60)).round(2) %> / min</li>
+						<li class="list-group-item">Dauna efectuata: <%= (@userCautatProfileStats[current_user.profile.region]["stats"]["quickplay"]["game_stats"]["damage_done"]/(@userCautatProfileStats[current_user.profile.region]["stats"]["quickplay"]["game_stats"]["time_played"].to_i * 60)).round(2) %> / min</li>
+						<li class="list-group-item">Decese: <%= (@userCautatProfileStats[current_user.profile.region]["stats"]["quickplay"]["game_stats"]["deaths"]/(@userCautatProfileStats[current_user.profile.region]["stats"]["quickplay"]["game_stats"]["time_played"].to_i * 60)).round(2) %> / min</li>
+						<li class="list-group-item">Heal: <%= (@userCautatProfileStats[current_user.profile.region]["stats"]["quickplay"]["game_stats"]["healing_done"]/(@userCautatProfileStats[current_user.profile.region]["stats"]["quickplay"]["game_stats"]["time_played"].to_i * 60)).round(2) %>  hp / min</li>
+						<li class="list-group-item">Medalii: <span style="color: saddlebrown"><%= @userCautatProfileStats[current_user.profile.region]["stats"]["quickplay"]["game_stats"]["medals_bronze"].to_i %></span> - <span style="color: gray"><%= @userCautatProfileStats[current_user.profile.region]["stats"]["quickplay"]["game_stats"]["medals_silver"].to_i %></span> - <span style="color: goldenrod"><%= @userCautatProfileStats[current_user.profile.region]["stats"]["quickplay"]["game_stats"]["medals_gold"].to_i %></span></li>
+					</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+<!-- Ana -->
+<% if @userConectatEroi[current_user.profile.region]["heroes"]["playtime"]["quickplay"]["ana"] != 0 && @userCautatEroi[@regiuneCautat]["heroes"]["playtime"]["quickplay"]["ana"] != 0%>
+		<div class="container">
+			<div class="row">
+				<div class="statistics-user">
+					<h2>Ana</h2> <br><br>
+					
+					<div style="display:inline-block; *display:inline; zoom: 1; margin-left: 15%;">
+
+					<span style="color: red; font-size: 25px;"><%= current_user.profile.battletag.gsub('-','#')%> </span>
+                      <ul class="list-group">
+						   <li class="list-group-item">Eliminari: <%= (@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["ana"]["general_stats"]["eliminations"]/(@userConectatEroi[current_user.profile.region]["heroes"]["playtime"]["quickplay"]["ana"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Decese:  <%= (@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["ana"]["general_stats"]["deaths"]/(@userConectatEroi[current_user.profile.region]["heroes"]["playtime"]["quickplay"]["ana"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Participari:  <%= ((@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["ana"]["general_stats"]["offensive_assists"] + @userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["ana"]["general_stats"]["defensive_assists"]) /(@userConectatEroi[current_user.profile.region]["heroes"]["playtime"]["quickplay"]["ana"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Dauna efectuata: <%= (@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["ana"]["general_stats"]["damage_done"]/(@userConectatEroi[current_user.profile.region]["heroes"]["playtime"]["quickplay"]["ana"] * 60)).round(2)%>  / min</li>
+						   <li class="list-group-item">Heal: <%= (@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["ana"]["general_stats"]["healing_done"]/(@userConectatEroi[current_user.profile.region]["heroes"]["playtime"]["quickplay"]["ana"]* 60)).round(2)%> / min</li>
+						   <li class="list-group-item">K/D: <%= (@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["ana"]["general_stats"]["eliminations"].to_i/@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["ana"]["general_stats"]["deaths"].to_f).round(2)  %></li>
+						   <li class="list-group-item">Acuratete: <%= ((@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["ana"]["general_stats"]["weapon_accuracy"]) * 100).to_i %>% </li>
+						   <li class="list-group-item">Inamici adormiti: <%= @userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["ana"]["general_stats"]["enemies_slept"] %></li>
+					   </ul>
+					</div>
+				
+				<div style="display:inline-block; *display:inline; zoom: 1; margin-left: 15%;">
+
+				<span style="color: BLUE; font-size: 25px;"><%= @userCautat.battletag.gsub("-","#") %> </span>
+                      <ul class="list-group">
+						   <li class="list-group-item">Eliminari: <%= (@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["ana"]["general_stats"]["eliminations"]/(@userCautatEroi[@regiuneCautat]["heroes"]["playtime"]["quickplay"]["ana"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Decese:  <%= (@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["ana"]["general_stats"]["deaths"]/(@userCautatEroi[@regiuneCautat]["heroes"]["playtime"]["quickplay"]["ana"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Participari:  <%= ((@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["ana"]["general_stats"]["offensive_assists"] + @userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["ana"]["general_stats"]["defensive_assists"]) /(@userCautatEroi[@regiuneCautat]["heroes"]["playtime"]["quickplay"]["ana"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Dauna efectuata: <%= (@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["ana"]["general_stats"]["damage_done"]/(@userCautatEroi[@regiuneCautat]["heroes"]["playtime"]["quickplay"]["ana"] * 60)).round(2)%>  / min</li>
+						   <li class="list-group-item">Heal: <%= (@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["ana"]["general_stats"]["healing_done"]/(@userCautatEroi[@regiuneCautat]["heroes"]["playtime"]["quickplay"]["ana"]* 60)).round(2)%> / min</li>
+						   <li class="list-group-item">K/D: <%= (@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["ana"]["general_stats"]["eliminations"].to_i/@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["ana"]["general_stats"]["deaths"].to_f).round(2)  %></li>
+						   <li class="list-group-item">Acuratete: <%= ((@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["ana"]["general_stats"]["weapon_accuracy"]) * 100).to_i %>% </li>
+						   <li class="list-group-item">Inamici adormiti: <%= @userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["ana"]["general_stats"]["enemies_slept"] %></li>
+					   </ul>
+					</div>
+				</div>
+			</div>
+		</div>
+<% end %>
+
+<!-- Bastion -->
+<% if @userConectatEroi[current_user.profile.region]["heroes"]["playtime"]["quickplay"]["bastion"] != 0 && @userCautatEroi[@regiuneCautat]["heroes"]["playtime"]["quickplay"]["bastion"] != 0%>
+		<div class="container">
+			<div class="row">
+				<div class="statistics-user">
+					<h2>Bastion</h2> <br><br>
+					
+					<div style="display:inline-block; *display:inline; zoom: 1; margin-left: 15%;">
+
+					<span style="color: red; font-size: 25px;"><%= current_user.profile.battletag.gsub('-','#')%> </span>
+                       <ul class="list-group">
+						   <li class="list-group-item">Eliminari: <%= (@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["bastion"]["general_stats"]["eliminations"]/(@userConectatEroi[current_user.profile.region]["heroes"]["playtime"]["quickplay"]["bastion"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Decese:  <%= (@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["bastion"]["general_stats"]["deaths"]/(@userConectatEroi[current_user.profile.region]["heroes"]["playtime"]["quickplay"]["bastion"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Dauna efectuata: <%= (@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["bastion"]["general_stats"]["damage_done"]/(@userConectatEroi[current_user.profile.region]["heroes"]["playtime"]["quickplay"]["bastion"] * 60)).round(2)%>  / min</li>
+						   <li class="list-group-item">Heal Personal: <%= (@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["bastion"]["general_stats"]["healing_done"]/(@userConectatEroi[current_user.profile.region]["heroes"]["playtime"]["quickplay"]["bastion"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">K/D: <%= (@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["bastion"]["general_stats"]["eliminations"].to_i/@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["bastion"]["general_stats"]["deaths"].to_f).round(2)  %></li>
+						   <li class="list-group-item">Acuratete: <%= ((@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["bastion"]["general_stats"]["weapon_accuracy"]) * 100).to_i %>% </li>
+						   <li class="list-group-item">Eliminari in modul Sentry: <%= @userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["bastion"]["hero_stats"]["sentry_kills"].to_i %></li>
+						   <li class="list-group-item">Eliminari in modul Tank: <%= @userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["bastion"]["hero_stats"]["tank_kills"].to_i %></li>
+					   </ul>
+					</div>
+				
+				<div style="display:inline-block; *display:inline; zoom: 1; margin-left: 15%;">
+
+				<span style="color: BLUE; font-size: 25px;"><%= @userCautat.battletag.gsub("-","#") %> </span>
+                       <ul class="list-group">
+						   <li class="list-group-item">Eliminari: <%= (@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["bastion"]["general_stats"]["eliminations"]/(@userCautatEroi[@regiuneCautat]["heroes"]["playtime"]["quickplay"]["bastion"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Decese:  <%= (@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["bastion"]["general_stats"]["deaths"]/(@userCautatEroi[@regiuneCautat]["heroes"]["playtime"]["quickplay"]["bastion"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Dauna efectuata: <%= (@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["bastion"]["general_stats"]["damage_done"]/(@userCautatEroi[@regiuneCautat]["heroes"]["playtime"]["quickplay"]["bastion"] * 60)).round(2)%>  / min</li>
+						   <li class="list-group-item">Heal Personal: <%= (@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["bastion"]["general_stats"]["healing_done"]/(@userCautatEroi[@regiuneCautat]["heroes"]["playtime"]["quickplay"]["bastion"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">K/D: <%= (@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["bastion"]["general_stats"]["eliminations"].to_i/@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["bastion"]["general_stats"]["deaths"].to_f).round(2)  %></li>
+						   <li class="list-group-item">Acuratete: <%= ((@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["bastion"]["general_stats"]["weapon_accuracy"]) * 100).to_i %>% </li>
+						   <li class="list-group-item">Eliminari in modul Sentry: <%= @userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["bastion"]["hero_stats"]["sentry_kills"].to_i %></li>
+						   <li class="list-group-item">Eliminari in modul Tank: <%= @userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["bastion"]["hero_stats"]["tank_kills"].to_i %></li>
+					   </ul>
+					</div>
+				</div>
+			</div>
+		</div>
+<% end %>
+
+<!-- D.Va -->
+<% if @userConectatEroi[current_user.profile.region]["heroes"]["playtime"]["quickplay"]["dva"] != 0 && @userCautatEroi[@regiuneCautat]["heroes"]["playtime"]["quickplay"]["dva"] != 0%>
+		<div class="container">
+			<div class="row">
+				<div class="statistics-user">
+					<h2>D.Va</h2> <br><br>
+					
+					<div style="display:inline-block; *display:inline; zoom: 1; margin-left: 15%;">
+
+					<span style="color: red; font-size: 25px;"><%= current_user.profile.battletag.gsub('-','#')%> </span>
+                       <ul class="list-group">
+						   <li class="list-group-item">Eliminari: <%= (@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["dva"]["general_stats"]["eliminations"]/(@userConectatEroi[current_user.profile.region]["heroes"]["playtime"]["quickplay"]["dva"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Decese:  <%= (@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["dva"]["general_stats"]["deaths"]/(@userConectatEroi[current_user.profile.region]["heroes"]["playtime"]["quickplay"]["dva"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Dauna efectuata: <%= (@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["dva"]["general_stats"]["damage_done"]/(@userConectatEroi[current_user.profile.region]["heroes"]["playtime"]["quickplay"]["dva"] * 60)).round(2)%>  / min</li>
+						   <li class="list-group-item">Daune blocate: <%= (@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["dva"]["hero_stats"]["damage_blocked"]/(@userConectatEroi[current_user.profile.region]["heroes"]["playtime"]["quickplay"]["dva"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">K/D: <%= (@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["dva"]["general_stats"]["eliminations"].to_i/@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["dva"]["general_stats"]["deaths"].to_f).round(2)  %></li>
+						   <li class="list-group-item">Acuratete: <%= ((@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["dva"]["general_stats"]["weapon_accuracy"]) * 100).to_i %>% </li>
+						   <li class="list-group-item">I-a fost distrus robotul de: <%= @userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["dva"]["hero_stats"]["mech_deaths"].to_i %> ori</li>
+						   <li class="list-group-item">A chemat robotul de: <%= @userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["dva"]["hero_stats"]["mechs_called"].to_i %> ori</li>
+					   </ul>
+					</div>
+				
+				<div style="display:inline-block; *display:inline; zoom: 1; margin-left: 15%;">
+
+				<span style="color: BLUE; font-size: 25px;"><%= @userCautat.battletag.gsub("-","#") %> </span>
+                       <ul class="list-group">
+						   <li class="list-group-item">Eliminari: <%= (@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["dva"]["general_stats"]["eliminations"]/(@userCautatEroi[@regiuneCautat]["heroes"]["playtime"]["quickplay"]["dva"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Decese:  <%= (@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["dva"]["general_stats"]["deaths"]/(@userCautatEroi[@regiuneCautat]["heroes"]["playtime"]["quickplay"]["dva"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Dauna efectuata: <%= (@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["dva"]["general_stats"]["damage_done"]/(@userCautatEroi[@regiuneCautat]["heroes"]["playtime"]["quickplay"]["dva"] * 60)).round(2)%>  / min</li>
+						   <li class="list-group-item">Daune blocate: <%= (@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["dva"]["hero_stats"]["damage_blocked"]/(@userCautatEroi[@regiuneCautat]["heroes"]["playtime"]["quickplay"]["dva"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">K/D: <%= (@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["dva"]["general_stats"]["eliminations"].to_i/@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["dva"]["general_stats"]["deaths"].to_f).round(2)  %></li>
+						   <li class="list-group-item">Acuratete: <%= ((@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["dva"]["general_stats"]["weapon_accuracy"]) * 100).to_i %>% </li>
+						   <li class="list-group-item">I-a fost distrus robotul de: <%= @userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["dva"]["hero_stats"]["mech_deaths"].to_i %> ori</li>
+						   <li class="list-group-item">A chemat robotul de: <%= @userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["dva"]["hero_stats"]["mechs_called"].to_i %> ori</li>
+					   </ul>
+					</div>
+				</div>
+			</div>
+		</div>
+<% end %>
+
+<!-- Genji -->
+<% if @userConectatEroi[current_user.profile.region]["heroes"]["playtime"]["quickplay"]["genji"] != 0 && @userCautatEroi[@regiuneCautat]["heroes"]["playtime"]["quickplay"]["genji"] != 0%>
+		<div class="container">
+			<div class="row">
+				<div class="statistics-user">
+					<h2>Genji</h2> <br><br>
+					
+					<div style="display:inline-block; *display:inline; zoom: 1; margin-left: 15%;">
+
+					<span style="color: red; font-size: 25px;"><%= current_user.profile.battletag.gsub('-','#')%> </span>
+                       <ul class="list-group">
+						   <li class="list-group-item">Eliminari: <%= (@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["genji"]["general_stats"]["eliminations"]/(@userConectatEroi[current_user.profile.region]["heroes"]["playtime"]["quickplay"]["genji"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Decese:  <%= (@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["genji"]["general_stats"]["deaths"]/(@userConectatEroi[current_user.profile.region]["heroes"]["playtime"]["quickplay"]["genji"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Shuriken-uri aruncate:  <%= (@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["genji"]["general_stats"]["shots_fired"]/(@userConectatEroi[current_user.profile.region]["heroes"]["playtime"]["quickplay"]["genji"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Dauna efectuata: <%= (@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["genji"]["general_stats"]["damage_done"]/(@userConectatEroi[current_user.profile.region]["heroes"]["playtime"]["quickplay"]["genji"] * 60)).round(2)%>  / min</li>
+						   <li class="list-group-item">Lovituri critice: <%= @userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["genji"]["general_stats"]["critical_hits"].to_i %>
+						   <li class="list-group-item">K/D: <%= (@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["genji"]["general_stats"]["eliminations"].to_i/@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["genji"]["general_stats"]["deaths"].to_f).round(2)  %></li>
+						   <li class="list-group-item">Acuratete: <%= ((@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["genji"]["general_stats"]["weapon_accuracy"]) * 100).to_i %>% </li>
+						   <li class="list-group-item">Dauna reflectata: <%= @userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["genji"]["hero_stats"]["damage_reflected"].to_i %></li>
+					   </ul>
+					</div>
+				
+				<div style="display:inline-block; *display:inline; zoom: 1; margin-left: 15%;">
+
+				<span style="color: BLUE; font-size: 25px;"><%= @userCautat.battletag.gsub("-","#") %> </span>
+                       <ul class="list-group">
+						   <li class="list-group-item">Eliminari: <%= (@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["genji"]["general_stats"]["eliminations"]/(@userCautatEroi[@regiuneCautat]["heroes"]["playtime"]["quickplay"]["genji"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Decese:  <%= (@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["genji"]["general_stats"]["deaths"]/(@userCautatEroi[@regiuneCautat]["heroes"]["playtime"]["quickplay"]["genji"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Shuriken-uri aruncate:  <%= (@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["genji"]["general_stats"]["shots_fired"]/(@userCautatEroi[@regiuneCautat]["heroes"]["playtime"]["quickplay"]["genji"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Dauna efectuata: <%= (@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["genji"]["general_stats"]["damage_done"]/(@userCautatEroi[@regiuneCautat]["heroes"]["playtime"]["quickplay"]["genji"] * 60)).round(2)%>  / min</li>
+						   <li class="list-group-item">Lovituri critice: <%= @userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["genji"]["general_stats"]["critical_hits"].to_i %>
+						   <li class="list-group-item">K/D: <%= (@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["genji"]["general_stats"]["eliminations"].to_i/@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["genji"]["general_stats"]["deaths"].to_f).round(2)  %></li>
+						   <li class="list-group-item">Acuratete: <%= ((@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["genji"]["general_stats"]["weapon_accuracy"]) * 100).to_i %>% </li>
+						   <li class="list-group-item">Dauna reflectata: <%= @userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["genji"]["hero_stats"]["damage_reflected"].to_i %></li>
+					   </ul>
+					</div>
+				</div>
+			</div>
+		</div>
+<% end %>
+
+<!-- Hanzo -->
+<% if @userConectatEroi[current_user.profile.region]["heroes"]["playtime"]["quickplay"]["hanzo"] != 0 && @userCautatEroi[@regiuneCautat]["heroes"]["playtime"]["quickplay"]["hanzo"] != 0%>
+		<div class="container">
+			<div class="row">
+				<div class="statistics-user">
+					<h2>Hanzo</h2> <br><br>
+					
+					<div style="display:inline-block; *display:inline; zoom: 1; margin-left: 15%;">
+
+					<span style="color: red; font-size: 25px;"><%= current_user.profile.battletag.gsub('-','#')%> </span>
+                       <ul class="list-group">
+						   <li class="list-group-item">Eliminari: <%= (@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["hanzo"]["general_stats"]["eliminations"]/(@userConectatEroi[current_user.profile.region]["heroes"]["playtime"]["quickplay"]["hanzo"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Decese:  <%= (@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["hanzo"]["general_stats"]["deaths"]/(@userConectatEroi[current_user.profile.region]["heroes"]["playtime"]["quickplay"]["hanzo"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Sageti trase:  <%= (@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["hanzo"]["general_stats"]["shots_fired"]/(@userConectatEroi[current_user.profile.region]["heroes"]["playtime"]["quickplay"]["hanzo"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Dauna efectuata: <%= (@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["hanzo"]["general_stats"]["damage_done"]/(@userConectatEroi[current_user.profile.region]["heroes"]["playtime"]["quickplay"]["hanzo"] * 60)).round(2)%>  / min</li>
+						   <li class="list-group-item">Lovituri critice: <%= @userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["hanzo"]["general_stats"]["critical_hits"].to_i %>
+						   <li class="list-group-item">K/D: <%= (@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["hanzo"]["general_stats"]["eliminations"].to_i/@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["hanzo"]["general_stats"]["deaths"].to_f).round(2)  %></li>
+						   <li class="list-group-item">Acuratete: <%= ((@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["hanzo"]["general_stats"]["weapon_accuracy"]) * 100).to_i %>% </li>
+						   <% if !@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["hanzo"]["hero_stats"]["dragonstrike_kills"].nil?%>
+						   <li class="list-group-item">Eliminari folosind dragonul: <%= @userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["hanzo"]["hero_stats"]["dragonstrike_kills"].to_i %></li>
+						   <% else %>
+						   <li class="list-group-item">O singura eliminare, folosind dragonul!</li>
+						   <% end %>
+					   </ul>
+					</div>
+				
+				<div style="display:inline-block; *display:inline; zoom: 1; margin-left: 15%;">
+
+				<span style="color: BLUE; font-size: 25px;"><%= @userCautat.battletag.gsub("-","#") %> </span>
+                       <ul class="list-group">
+						   <li class="list-group-item">Eliminari: <%= (@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["hanzo"]["general_stats"]["eliminations"]/(@userCautatEroi[@regiuneCautat]["heroes"]["playtime"]["quickplay"]["hanzo"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Decese:  <%= (@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["hanzo"]["general_stats"]["deaths"]/(@userCautatEroi[@regiuneCautat]["heroes"]["playtime"]["quickplay"]["hanzo"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Sageti trase:  <%= (@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["hanzo"]["general_stats"]["shots_fired"]/(@userCautatEroi[@regiuneCautat]["heroes"]["playtime"]["quickplay"]["hanzo"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Dauna efectuata: <%= (@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["hanzo"]["general_stats"]["damage_done"]/(@userCautatEroi[@regiuneCautat]["heroes"]["playtime"]["quickplay"]["hanzo"] * 60)).round(2)%>  / min</li>
+						   <li class="list-group-item">Lovituri critice: <%= @userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["hanzo"]["general_stats"]["critical_hits"].to_i %>
+						   <li class="list-group-item">K/D: <%= (@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["hanzo"]["general_stats"]["eliminations"].to_i/@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["hanzo"]["general_stats"]["deaths"].to_f).round(2)  %></li>
+						   <li class="list-group-item">Acuratete: <%= ((@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["hanzo"]["general_stats"]["weapon_accuracy"]) * 100).to_i %>% </li>
+						   <% if !@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["hanzo"]["hero_stats"]["dragonstrike_kills"].nil?%>
+						   <li class="list-group-item">Eliminari folosind dragonul: <%= @userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["hanzo"]["hero_stats"]["dragonstrike_kills"].to_i %></li>
+						   <% else %>
+						   <li class="list-group-item">O singura eliminare, folosind dragonul!</li>
+						   <% end %>
+					   </ul>
+					</div>
+				</div>
+			</div>
+		</div>
+<% end %>
+
+<!-- Junkrat -->
+<% if @userConectatEroi[current_user.profile.region]["heroes"]["playtime"]["quickplay"]["junkrat"] != 0 && @userCautatEroi[@regiuneCautat]["heroes"]["playtime"]["quickplay"]["junkrat"] != 0%>
+		<div class="container">
+			<div class="row">
+				<div class="statistics-user">
+					<h2>Junkrat</h2> <br><br>
+					
+					<div style="display:inline-block; *display:inline; zoom: 1; margin-left: 15%;">
+
+					<span style="color: red; font-size: 25px;"><%= current_user.profile.battletag.gsub('-','#')%> </span>
+                       <ul class="list-group">
+						   <li class="list-group-item">Eliminari: <%= (@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["junkrat"]["general_stats"]["eliminations"]/(@userConectatEroi[current_user.profile.region]["heroes"]["playtime"]["quickplay"]["junkrat"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Decese:  <%= (@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["junkrat"]["general_stats"]["deaths"]/(@userConectatEroi[current_user.profile.region]["heroes"]["playtime"]["quickplay"]["junkrat"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Bombite aruncate:  <%= (@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["junkrat"]["general_stats"]["shots_fired"]/(@userConectatEroi[current_user.profile.region]["heroes"]["playtime"]["quickplay"]["junkrat"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Dauna efectuata: <%= (@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["junkrat"]["general_stats"]["damage_done"]/(@userConectatEroi[current_user.profile.region]["heroes"]["playtime"]["quickplay"]["junkrat"] * 60)).round(2)%>  / min</li>
+						   <li class="list-group-item">Inamici prinsi in capcana: <%= @userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["junkrat"]["hero_stats"]["enemies_trapped"] %>
+						   <li class="list-group-item">K/D: <%= (@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["junkrat"]["general_stats"]["eliminations"].to_i/@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["junkrat"]["general_stats"]["deaths"].to_f).round(2)  %></li>
+						   <li class="list-group-item">Acuratete: <%= ((@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["junkrat"]["general_stats"]["weapon_accuracy"]) * 100).to_i %>% </li>
+						   <li class="list-group-item">Eliminari folosind RIP-Tire: <%= @userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["junkrat"]["hero_stats"]["rip_tire_kills"].to_i %></li>
+					   </ul>
+					</div>
+				
+				<div style="display:inline-block; *display:inline; zoom: 1; margin-left: 15%;">
+
+				<span style="color: BLUE; font-size: 25px;"><%= @userCautat.battletag.gsub("-","#") %> </span>
+                       <ul class="list-group">
+						   <li class="list-group-item">Eliminari: <%= (@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["junkrat"]["general_stats"]["eliminations"]/(@userCautatEroi[@regiuneCautat]["heroes"]["playtime"]["quickplay"]["junkrat"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Decese:  <%= (@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["junkrat"]["general_stats"]["deaths"]/(@userCautatEroi[@regiuneCautat]["heroes"]["playtime"]["quickplay"]["junkrat"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Bombite aruncate:  <%= (@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["junkrat"]["general_stats"]["shots_fired"]/(@userCautatEroi[@regiuneCautat]["heroes"]["playtime"]["quickplay"]["junkrat"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Dauna efectuata: <%= (@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["junkrat"]["general_stats"]["damage_done"]/(@userCautatEroi[@regiuneCautat]["heroes"]["playtime"]["quickplay"]["junkrat"] * 60)).round(2)%>  / min</li>
+						   <li class="list-group-item">Inamici prinsi in capcana: <%= @userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["junkrat"]["hero_stats"]["enemies_trapped"] %>
+						   <li class="list-group-item">K/D: <%= (@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["junkrat"]["general_stats"]["eliminations"].to_i/@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["junkrat"]["general_stats"]["deaths"].to_f).round(2)  %></li>
+						   <li class="list-group-item">Acuratete: <%= ((@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["junkrat"]["general_stats"]["weapon_accuracy"]) * 100).to_i %>% </li>
+						   <li class="list-group-item">Eliminari folosind RIP-Tire: <%= @userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["junkrat"]["hero_stats"]["rip_tire_kills"].to_i %></li>
+					   </ul>
+					</div>
+				</div>
+			</div>
+		</div>
+<% end %>
+
+<!-- Lucio -->
+<% if @userConectatEroi[current_user.profile.region]["heroes"]["playtime"]["quickplay"]["lucio"] != 0 && @userCautatEroi[@regiuneCautat]["heroes"]["playtime"]["quickplay"]["lucio"] != 0%>
+		<div class="container">
+			<div class="row">
+				<div class="statistics-user">
+					<h2>Lucio</h2> <br><br>
+					
+					<div style="display:inline-block; *display:inline; zoom: 1; margin-left: 15%;">
+
+					<span style="color: red; font-size: 25px;"><%= current_user.profile.battletag.gsub('-','#')%> </span>
+                       <ul class="list-group">
+						   <li class="list-group-item">Eliminari: <%= (@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["lucio"]["general_stats"]["eliminations"]/(@userConectatEroi[current_user.profile.region]["heroes"]["playtime"]["quickplay"]["lucio"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Decese:  <%= (@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["lucio"]["general_stats"]["deaths"]/(@userConectatEroi[current_user.profile.region]["heroes"]["playtime"]["quickplay"]["lucio"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Gloante trase:  <%= (@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["lucio"]["general_stats"]["shots_fired"]/(@userConectatEroi[current_user.profile.region]["heroes"]["playtime"]["quickplay"]["lucio"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Dauna efectuata: <%= (@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["lucio"]["general_stats"]["damage_done"]/(@userConectatEroi[current_user.profile.region]["heroes"]["playtime"]["quickplay"]["lucio"] * 60)).round(2)%>  / min</li>
+						   <li class="list-group-item">Heal: <%= (@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["lucio"]["general_stats"]["healing_done"]/(@userConectatEroi[current_user.profile.region]["heroes"]["playtime"]["quickplay"]["lucio"]* 60)).round(2)%> / min</li>						   <li class="list-group-item">K/D: <%= (@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["lucio"]["general_stats"]["eliminations"].to_i/@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["lucio"]["general_stats"]["deaths"].to_f).round(2)  %></li>
+						   <li class="list-group-item">Acuratete: <%= ((@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["lucio"]["general_stats"]["weapon_accuracy"]) * 100).to_i %>% </li>
+						   <li class="list-group-item">A oferit <%= @userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["lucio"]["hero_stats"]["sound_barriers_provided"].to_i %> bariere de sunet</li>
+					   </ul>
+					</div>
+				
+				<div style="display:inline-block; *display:inline; zoom: 1; margin-left: 15%;">
+
+				<span style="color: BLUE; font-size: 25px;"><%= @userCautat.battletag.gsub("-","#") %> </span>
+                       <ul class="list-group">
+						   <li class="list-group-item">Eliminari: <%= (@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["lucio"]["general_stats"]["eliminations"]/(@userCautatEroi[@regiuneCautat]["heroes"]["playtime"]["quickplay"]["lucio"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Decese:  <%= (@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["lucio"]["general_stats"]["deaths"]/(@userCautatEroi[@regiuneCautat]["heroes"]["playtime"]["quickplay"]["lucio"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Gloante trase:  <%= (@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["lucio"]["general_stats"]["shots_fired"]/(@userCautatEroi[@regiuneCautat]["heroes"]["playtime"]["quickplay"]["lucio"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Dauna efectuata: <%= (@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["lucio"]["general_stats"]["damage_done"]/(@userCautatEroi[@regiuneCautat]["heroes"]["playtime"]["quickplay"]["lucio"] * 60)).round(2)%>  / min</li>
+						   <li class="list-group-item">Heal: <%= (@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["lucio"]["general_stats"]["healing_done"]/(@userCautatEroi[@regiuneCautat]["heroes"]["playtime"]["quickplay"]["lucio"]* 60)).round(2)%> / min</li>						   <li class="list-group-item">K/D: <%= (@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["lucio"]["general_stats"]["eliminations"].to_i/@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["lucio"]["general_stats"]["deaths"].to_f).round(2)  %></li>
+						   <li class="list-group-item">Acuratete: <%= ((@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["lucio"]["general_stats"]["weapon_accuracy"]) * 100).to_i %>% </li>
+						   <li class="list-group-item">A oferit <%= @userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["lucio"]["hero_stats"]["sound_barriers_provided"].to_i %> bariere de sunet</li>
+					   </ul>
+					</div>
+				</div>
+			</div>
+		</div>
+<% end %>
+
+<!-- McCree -->
+<% if @userConectatEroi[current_user.profile.region]["heroes"]["playtime"]["quickplay"]["mccree"] != 0 && @userCautatEroi[@regiuneCautat]["heroes"]["playtime"]["quickplay"]["mccree"] != 0%>
+		<div class="container">
+			<div class="row">
+				<div class="statistics-user">
+					<h2>McCree</h2> <br><br>
+					
+					<div style="display:inline-block; *display:inline; zoom: 1; margin-left: 15%;">
+
+					<span style="color: red; font-size: 25px;"><%= current_user.profile.battletag.gsub('-','#')%> </span>
+                       <ul class="list-group">
+						   <li class="list-group-item">Eliminari: <%= (@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["mccree"]["general_stats"]["eliminations"]/(@userConectatEroi[current_user.profile.region]["heroes"]["playtime"]["quickplay"]["mccree"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Decese:  <%= (@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["mccree"]["general_stats"]["deaths"]/(@userConectatEroi[current_user.profile.region]["heroes"]["playtime"]["quickplay"]["mccree"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Gloante trase:  <%= (@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["mccree"]["general_stats"]["shots_fired"]/(@userConectatEroi[current_user.profile.region]["heroes"]["playtime"]["quickplay"]["mccree"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Dauna efectuata: <%= (@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["mccree"]["general_stats"]["damage_done"]/(@userConectatEroi[current_user.profile.region]["heroes"]["playtime"]["quickplay"]["mccree"] * 60)).round(2)%>  / min</li>
+						   <li class="list-group-item">Lovituri critice: <%= (@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["mccree"]["general_stats"]["critical_hits"]/(@userConectatEroi[current_user.profile.region]["heroes"]["playtime"]["quickplay"]["mccree"]* 60)).round(2)%> / min</li>
+						   <li class="list-group-item">K/D: <%= (@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["mccree"]["general_stats"]["eliminations"].to_i/@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["mccree"]["general_stats"]["deaths"].to_f).round(2)  %></li>
+						   <li class="list-group-item">Acuratete: <%= ((@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["mccree"]["general_stats"]["weapon_accuracy"]) * 100).to_i %>% </li>
+						   <li class="list-group-item">Inamici omorati folosind DeadEye: <%= @userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["mccree"]["hero_stats"]["deadeye_kills"].to_i %></li>
+					   </ul>
+					</div>
+				
+				<div style="display:inline-block; *display:inline; zoom: 1; margin-left: 15%;">
+
+				<span style="color: BLUE; font-size: 25px;"><%= @userCautat.battletag.gsub("-","#") %> </span>
+                       <ul class="list-group">
+						   <li class="list-group-item">Eliminari: <%= (@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["mccree"]["general_stats"]["eliminations"]/(@userCautatEroi[@regiuneCautat]["heroes"]["playtime"]["quickplay"]["mccree"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Decese:  <%= (@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["mccree"]["general_stats"]["deaths"]/(@userCautatEroi[@regiuneCautat]["heroes"]["playtime"]["quickplay"]["mccree"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Gloante trase:  <%= (@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["mccree"]["general_stats"]["shots_fired"]/(@userCautatEroi[@regiuneCautat]["heroes"]["playtime"]["quickplay"]["mccree"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Dauna efectuata: <%= (@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["mccree"]["general_stats"]["damage_done"]/(@userCautatEroi[@regiuneCautat]["heroes"]["playtime"]["quickplay"]["mccree"] * 60)).round(2)%>  / min</li>
+						   <li class="list-group-item">Lovituri critice: <%= (@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["mccree"]["general_stats"]["critical_hits"]/(@userCautatEroi[@regiuneCautat]["heroes"]["playtime"]["quickplay"]["mccree"]* 60)).round(2)%> / min</li>
+						   <li class="list-group-item">K/D: <%= (@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["mccree"]["general_stats"]["eliminations"].to_i/@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["mccree"]["general_stats"]["deaths"].to_f).round(2)  %></li>
+						   <li class="list-group-item">Acuratete: <%= ((@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["mccree"]["general_stats"]["weapon_accuracy"]) * 100).to_i %>% </li>
+						   <li class="list-group-item">Inamici omorati folosind DeadEye: <%= @userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["mccree"]["hero_stats"]["deadeye_kills"].to_i %></li>
+					   </ul>
+					</div>
+				</div>
+			</div>
+		</div>
+<% end %>
+
+<!-- Mei -->
+<% if @userConectatEroi[current_user.profile.region]["heroes"]["playtime"]["quickplay"]["mei"] != 0 && @userCautatEroi[@regiuneCautat]["heroes"]["playtime"]["quickplay"]["mei"] != 0%>
+		<div class="container">
+			<div class="row">
+				<div class="statistics-user">
+					<h2>Mei</h2> <br><br>
+					
+					<div style="display:inline-block; *display:inline; zoom: 1; margin-left: 15%;">
+
+					<span style="color: red; font-size: 25px;"><%= current_user.profile.battletag.gsub('-','#')%> </span>
+                       <ul class="list-group">
+						   <li class="list-group-item">Eliminari: <%= (@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["mei"]["general_stats"]["eliminations"].to_i/(@userConectatEroi[current_user.profile.region]["heroes"]["playtime"]["quickplay"]["mei"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Decese:  <%= (@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["mei"]["general_stats"]["deaths"].to_i/(@userConectatEroi[current_user.profile.region]["heroes"]["playtime"]["quickplay"]["mei"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Azot suflat:  <%= (@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["mei"]["general_stats"]["shots_fired"]/(@userConectatEroi[current_user.profile.region]["heroes"]["playtime"]["quickplay"]["mei"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Daune: <%= (@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["mei"]["general_stats"]["damage_done"].to_i/(@userConectatEroi[current_user.profile.region]["heroes"]["playtime"]["quickplay"]["mei"] * 60)).round(2)%>  / min</li>
+						   <li class="list-group-item">Lovituri critice: <%= (@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["mei"]["general_stats"]["critical_hits"].to_i/(@userConectatEroi[current_user.profile.region]["heroes"]["playtime"]["quickplay"]["mei"]* 60)).round(2)%> / min</li>
+						   <li class="list-group-item">K/D: <%= (@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["mei"]["general_stats"]["eliminations"].to_i/@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["mei"]["general_stats"]["deaths"].to_f).round(2)  %></li>
+						   <li class="list-group-item">Acuratete: <%= ((@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["mei"]["general_stats"]["weapon_accuracy"].to_i) * 100).to_i %>% </li>
+						   <li class="list-group-item">Inamici omorati folosind Ultimata: <%= @userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["mei"]["hero_stats"]["blizzard_kills"].to_i %></li>
+						   <li class="list-group-item">Inamici inghetati: <%= @userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["mei"]["hero_stats"]["enemies_frozen"].to_i %></li>
+						   <li class="list-group-item">Daune blocate: <%= @userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["mei"]["hero_stats"]["damage_blocked"].to_i %></li>
+					   </ul>
+					</div>
+				
+				<div style="display:inline-block; *display:inline; zoom: 1; margin-left: 15%;">
+
+				<span style="color: BLUE; font-size: 25px;"><%= @userCautat.battletag.gsub("-","#") %> </span>
+                       <ul class="list-group">
+						   <li class="list-group-item">Eliminari: <%= (@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["mei"]["general_stats"]["eliminations"].to_i/(@userCautatEroi[@regiuneCautat]["heroes"]["playtime"]["quickplay"]["mei"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Decese:  <%= (@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["mei"]["general_stats"]["deaths"].to_i/(@userCautatEroi[@regiuneCautat]["heroes"]["playtime"]["quickplay"]["mei"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Azot suflat:  <%= (@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["mei"]["general_stats"]["shots_fired"]/(@userCautatEroi[@regiuneCautat]["heroes"]["playtime"]["quickplay"]["mei"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Daune: <%= (@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["mei"]["general_stats"]["damage_done"].to_i/(@userCautatEroi[@regiuneCautat]["heroes"]["playtime"]["quickplay"]["mei"] * 60)).round(2)%>  / min</li>
+						   <li class="list-group-item">Lovituri critice: <%= (@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["mei"]["general_stats"]["critical_hits"].to_i/(@userCautatEroi[@regiuneCautat]["heroes"]["playtime"]["quickplay"]["mei"]* 60)).round(2)%> / min</li>
+						   <li class="list-group-item">K/D: <%= (@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["mei"]["general_stats"]["eliminations"].to_i/@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["mei"]["general_stats"]["deaths"].to_f).round(2)  %></li>
+						   <li class="list-group-item">Acuratete: <%= ((@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["mei"]["general_stats"]["weapon_accuracy"].to_i) * 100).to_i %>% </li>
+						   <li class="list-group-item">Inamici omorati folosind Ultimata: <%= @userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["mei"]["hero_stats"]["blizzard_kills"].to_i %></li>
+						   <li class="list-group-item">Inamici inghetati: <%= @userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["mei"]["hero_stats"]["enemies_frozen"].to_i %></li>
+						   <li class="list-group-item">Daune blocate: <%= @userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["mei"]["hero_stats"]["damage_blocked"].to_i %></li>
+					   </ul>
+					</div>
+				</div>
+			</div>
+		</div>
+<% end %>
+
+<!-- Mercy -->
+<% if @userConectatEroi[current_user.profile.region]["heroes"]["playtime"]["quickplay"]["mercy"] != 0 && @userCautatEroi[@regiuneCautat]["heroes"]["playtime"]["quickplay"]["mercy"] != 0%>
+		<div class="container">
+			<div class="row">
+				<div class="statistics-user">
+					<h2>Mercy</h2> <br><br>
+					
+					<div style="display:inline-block; *display:inline; zoom: 1; margin-left: 15%;">
+
+					<span style="color: red; font-size: 25px;"><%= current_user.profile.battletag.gsub('-','#')%> </span>
+                       <ul class="list-group">
+						   <li class="list-group-item">Eliminari: <%= (@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["mercy"]["general_stats"]["eliminations"]/(@userConectatEroi[current_user.profile.region]["heroes"]["playtime"]["quickplay"]["mercy"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Decese:  <%= (@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["mercy"]["general_stats"]["deaths"]/(@userConectatEroi[current_user.profile.region]["heroes"]["playtime"]["quickplay"]["mercy"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Gloante trase:  <%= (@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["mercy"]["general_stats"]["shots_fired"]/(@userConectatEroi[current_user.profile.region]["heroes"]["playtime"]["quickplay"]["mercy"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Dauna efectuata: <%= (@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["mercy"]["general_stats"]["damage_done"]/(@userConectatEroi[current_user.profile.region]["heroes"]["playtime"]["quickplay"]["mercy"] * 60)).round(2)%>  / min</li>
+						   <li class="list-group-item">Heal: <%= (@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["mercy"]["general_stats"]["healing_done"]/(@userConectatEroi[current_user.profile.region]["heroes"]["playtime"]["quickplay"]["mercy"]* 60)).round(2)%> / min</li>						   <li class="list-group-item">K/D: <%= (@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["mercy"]["general_stats"]["eliminations"].to_i/@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["mercy"]["general_stats"]["deaths"].to_f).round(2)  %></li>
+						   <li class="list-group-item">Acuratete: <%= ((@userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["mercy"]["general_stats"]["weapon_accuracy"]) * 100).to_i %>% </li>
+						   <li class="list-group-item">Aliati reinviati: <%= @userConectatEroi[current_user.profile.region]["heroes"]["stats"]["quickplay"]["mercy"]["hero_stats"]["players_resurrected"].to_i %> </li>
+					   </ul>
+					</div>
+				
+				<div style="display:inline-block; *display:inline; zoom: 1; margin-left: 15%;">
+
+				<span style="color: BLUE; font-size: 25px;"><%= @userCautat.battletag.gsub("-","#") %> </span>
+                       <ul class="list-group">
+						   <li class="list-group-item">Eliminari: <%= (@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["mercy"]["general_stats"]["eliminations"]/(@userCautatEroi[@regiuneCautat]["heroes"]["playtime"]["quickplay"]["mercy"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Decese:  <%= (@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["mercy"]["general_stats"]["deaths"]/(@userCautatEroi[@regiuneCautat]["heroes"]["playtime"]["quickplay"]["mercy"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Gloante trase:  <%= (@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["mercy"]["general_stats"]["shots_fired"]/(@userCautatEroi[@regiuneCautat]["heroes"]["playtime"]["quickplay"]["mercy"] * 60)).round(2)%> / min</li>
+						   <li class="list-group-item">Dauna efectuata: <%= (@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["mercy"]["general_stats"]["damage_done"]/(@userCautatEroi[@regiuneCautat]["heroes"]["playtime"]["quickplay"]["mercy"] * 60)).round(2)%>  / min</li>
+						   <li class="list-group-item">Heal: <%= (@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["mercy"]["general_stats"]["healing_done"]/(@userCautatEroi[@regiuneCautat]["heroes"]["playtime"]["quickplay"]["mercy"]* 60)).round(2)%> / min</li>						   <li class="list-group-item">K/D: <%= (@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["mercy"]["general_stats"]["eliminations"].to_i/@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["mercy"]["general_stats"]["deaths"].to_f).round(2)  %></li>
+						   <li class="list-group-item">Acuratete: <%= ((@userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["mercy"]["general_stats"]["weapon_accuracy"]) * 100).to_i %>% </li>
+						   <li class="list-group-item">Aliati reinviati: <%= @userCautatEroi[@regiuneCautat]["heroes"]["stats"]["quickplay"]["mercy"]["hero_stats"]["players_resurrected"].to_i %> </li>
+					   </ul>
+					</div>
+				</div>
+			</div>
+		</div>
+<% end %>
+
+<% else %>
+
+		<div class="container">
+			<div class="row">
+				<div class="statistics-user">
+					<h2>Nu a fost introdus nici un jucator!</h2> <br><br>
+
+					<div class="alert alert-warning" style="text-align: center;">
+						<strong>Va rugam sa mergeti pe prima pagina pentru a introduce datele in formularul pentru cautare</strong>
+					</div>
+				</div>
+			</div>
+		</div>
+<% end %>
+
